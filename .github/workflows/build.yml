@@ -64,7 +64,7 @@ jobs:
         shell: bash
         run: |
           # 内核 = 上游 SagerNet/sing-box 的固定 tag + 本仓库 patches/ 里的补丁。
-          # 以前是克隆自维护的 fork（NekoBoxHQ/sing-box），但那个仓库相对上游只差 1 行，
+          # 以前是克隆自维护的 sing-box fork（该仓库已随旧组织删除），它相对上游只差 1 行，
           # 却要跟着上游重推/rebase、还看不出到底改了什么；改成「上游 tag + 补丁」后，
           # 我们的改动在 patches/ 里公开可见，升级内核只需改 SING_BOX_VERSION。
           # libneko 已并入本仓库（go/libneko），不再需要克隆。
@@ -197,7 +197,7 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="$DEPS/built" -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BLACKBOX_TESTS=OFF
           cmake --build "$DEPS/build-zxing" -j4 --target install
 
-      - name: Configure & build GUI (sboxxd.exe)
+      - name: Configure & build GUI (Sbox-XD.exe)
         shell: bash
         run: |
           mkdir -p build
@@ -354,7 +354,7 @@ jobs:
         shell: bash
         run: |
           # 内核 = 上游 SagerNet/sing-box 的固定 tag + 本仓库 patches/ 里的补丁。
-          # 以前是克隆自维护的 fork（NekoBoxHQ/sing-box），但那个仓库相对上游只差 1 行，
+          # 以前是克隆自维护的 sing-box fork（该仓库已随旧组织删除），它相对上游只差 1 行，
           # 却要跟着上游重推/rebase、还看不出到底改了什么；改成「上游 tag + 补丁」后，
           # 我们的改动在 patches/ 里公开可见，升级内核只需改 SING_BOX_VERSION。
           # libneko 已并入本仓库（go/libneko），不再需要克隆。
@@ -496,7 +496,7 @@ jobs:
             libglib2.0-0 libharfbuzz0b libx11-6 libx11-xcb1 libxext6 libxfixes3 \
             libxi6 libxrender1 libsm6 libice6 libssl3 libxkbcommon0 libwayland-client0
 
-      - name: Configure & build GUI (sboxxd)
+      - name: Configure & build GUI (sbox-xd)
         shell: bash
         run: |
           mkdir -p build
