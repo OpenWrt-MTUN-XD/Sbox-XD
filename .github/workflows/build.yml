@@ -23,10 +23,12 @@ env:
   SING_BOX_VERSION: v1.14.4
   SING_BOX_PATCH: sing-box-0001-platform-log-disable-colors.patch
   # geo 数据固定版本（官方 release，均附带官方 sha256sum，CI 内强制校验）
-  GEOIP_DB_VER: 20260912
-  GEOSITE_DB_VER: 20261024005255
-  GEOIP_DAT_VER: 202609270006
-  GEOSITE_DAT_VER: 20260925234224
+  # 上游会定期删除旧 release，导致固定 tag 404（v5.0.13 前修过一次，2026-11 又失效）；
+  # 升级时四个 URL 与 .sha256sum 都要先本地 curl 验证存在、摘要一致再改。
+  GEOIP_DB_VER: 20261112
+  GEOSITE_DB_VER: 20261118141523
+  GEOIP_DAT_VER: 202611192204
+  GEOSITE_DAT_VER: 20261118141523
 
 jobs:
   build-windows:
