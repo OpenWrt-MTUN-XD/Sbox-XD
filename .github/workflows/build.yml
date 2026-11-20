@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  SBOX_VERSION: 5.0.22
+  SBOX_VERSION: 5.0.23
   # 内核 = 上游 SagerNet/sing-box 的固定 tag + patches/ 里的补丁（打完补丁即等于以前的 fork）
   SING_BOX_VERSION: v1.14.4
   SING_BOX_PATCH: sing-box-0001-platform-log-disable-colors.patch
@@ -261,11 +261,14 @@ jobs:
           body: |
             **Sbox-XD v${{ env.SBOX_VERSION }}** 已发布 / Released.
 
-            **本版要点：项目更名为 Sbox-XD（原 NekoBoxPro）**
+            **本版要点：项目更名为 Sbox-XD（原 NekoBoxPro），并轮换发布签名密钥**
 
             - 可执行文件：`NekoBoxPro.exe` → `Sbox-XD.exe`（Linux：`nekoboxpro` → `sbox-xd`）
             - 内核进程：`nekobox_core` → `sboxxd_core`；数据目录、日志名、单实例标识同步改名
             - 自动更新源与发布资产名改为 `Sbox-XD-*`（更新仍强制校验 minisign 签名）
+            - **签名密钥轮换**：旧签名私钥随已删除的旧仓库 secret 一并失效且不可恢复，
+              本版起用新密钥（keynum 02FBAF75E2085AAC）签发；内置更新会用它编译进二进制的
+              新公钥验签，因此需要手动安装本版一次，之后才能正常自动更新
             - 便携版升级会自动继承旧分组数据（`config/groups/nekobox.json` → `groups/sboxxd.json`）；
               使用 `-appdata` 或安装包的用户，数据目录会变为 `%LOCALAPPDATA%\Sbox-XD`，需重新导入或手动迁移
 

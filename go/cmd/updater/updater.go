@@ -17,12 +17,16 @@ import (
 
 // minisign 发布公钥（编译进二进制的信任锚）。
 //
-// 私钥（sboxxd.key）已由本项目生成器产出并保管于发布者本机，
-// 其内容需配置在 GitHub Secret：SBOX_MINISIGN_SECRET_KEY。
-// 公钥即下方常量（minisign .pub 文件第二行的 base64 串）。
+// 私钥内容需配置在 GitHub Secret：SBOX_MINISIGN_SECRET_KEY（不落库）。
+// 公钥即下方常量（minisign .pub 文件第二行的 base64 串，keynum 见下）。
 // 签名发布链路：CI tag 发布时对每个 release 资产生成 <资产>.minisig，
 // updater 在解压前验签；任何一步失败都拒绝更新（fail-closed）。
-const minisignPublicKey = "RWQJ/40yF6iTrj0ygW9w+I+3Ol+yXPDNaFw6AhjoPByVoayuurfmZqxl"
+//
+// 密钥轮换记录：
+//   - 2026-11 keynum 02FBAF75E2085AAC：随 Sbox-XD 改名重新生成。
+//     旧公钥（NekoBoxPro 时代）对应的私钥只存在于已删除仓库的 GitHub Secret 中，
+//     无法取回，故整体轮换；旧客户端本已随旧仓库失效，无兼容性影响。
+const minisignPublicKey = "RWSsWgjida/7AkNW/1ndgZZ8/ehlfVFp/F0CvI4Gb7RSAz71cwzBrvtP"
 
 // maxExtractSize 是解压内容总大小上限（2 GiB），防止 zip bomb / tar bomb。
 const maxExtractSize = 2 << 30
