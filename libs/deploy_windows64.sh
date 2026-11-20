@@ -7,11 +7,11 @@ rm -rf $DEST
 mkdir -p $DEST
 
 #### copy exe ####
-cp $BUILD/NekoBoxPro.exe $DEST
+cp $BUILD/Sbox-XD.exe $DEST
 
 #### deploy qt & DLL runtime ####
 pushd $DEST
-windeployqt NekoBoxPro.exe --no-compiler-runtime --no-system-d3d-compiler --no-opengl-sw --verbose 2
+windeployqt Sbox-XD.exe --no-compiler-runtime --no-system-d3d-compiler --no-opengl-sw --verbose 2
 rm -rf translations
 rm -rf libEGL.dll libGLESv2.dll Qt6Pdf.dll
 

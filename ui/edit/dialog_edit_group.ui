@@ -155,9 +155,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="copy_links_nkr">
+       <widget class="QPushButton" name="copy_links_sboxxd">
         <property name="text">
-         <string>Copy profile share links (Neko Links)</string>
+         <string>Copy profile share links (Sbox-XD Links)</string>
         </property>
        </widget>
       </item>
@@ -190,7 +190,7 @@
   <tabstop>url</tabstop>
   <tabstop>skip_auto_update</tabstop>
   <tabstop>copy_links</tabstop>
-  <tabstop>copy_links_nkr</tabstop>
+  <tabstop>copy_links_sboxxd</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -257,8 +257,8 @@
         <translation>لینک های اشتراک گذاری نمایه را کپی کنید</translation>
     </message>
     <message>
-        <source>Copy profile share links (Neko Links)</source>
-        <translation>لینک های اشتراک گذاری نمایه را کپی کنید (لینک های Neko)</translation>
+        <source>Copy profile share links (Sbox-XD Links)</source>
+        <translation>لینک های اشتراک گذاری نمایه را کپی کنید (لینک های Sbox-XD)</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -694,7 +694,7 @@ For more information, see the document &quot;Configuration/DNS&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Whether blacklisted or whitelisted, your traffic will be handled by nekobox_core (sing-tun). This is NOT equal to &quot;process mode&quot; of some software.</source>
+        <source>Whether blacklisted or whitelisted, your traffic will be handled by sboxxd_core (sing-tun). This is NOT equal to &quot;process mode&quot; of some software.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -714,10 +714,10 @@ For more information, see the document &quot;Configuration/DNS&quot;.</source>
         <translation type="unfinished">عیب یابی</translation>
     </message>
     <message>
-        <source>If you have trouble starting VPN, you can force reset nekobox_core process here.
+        <source>If you have trouble starting VPN, you can force reset sboxxd_core process here.
 
 If still not working, see documentation for more information.
-https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</source>
+https://github.com/OpenWrt-MTUN-XD/Sbox-XD/tree/main/docs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -734,7 +734,7 @@ https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</source>
     </message>
     <message>
         <source>Add a tun inbound to the profile startup, instead of using two processes.
-This needs to be run NekoBoxPro with administrator privileges.</source>
+This needs to be run Sbox-XD with administrator privileges.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1271,8 +1271,8 @@ This needs to be run NekoBoxPro with administrator privileges.</source>
         <translation>انتخاب همه</translation>
     </message>
     <message>
-        <source>Copy links of selected (Neko Links)</source>
-        <translation>کپی لینک های انتخاب شده (پیوندهای Neko)</translation>
+        <source>Copy links of selected (Sbox-XD Links)</source>
+        <translation>کپی لینک های انتخاب شده (پیوندهای Sbox-XD)</translation>
     </message>
     <message>
         <source>Copy links of selected</source>
@@ -1441,8 +1441,8 @@ End: %2</source>
         <translation type="unfinished">تنظیمات تغییر کرد</translation>
     </message>
     <message>
-        <source>Please run NekoBoxPro as admin</source>
-        <translation type="unfinished">لطفا Nekobox را با مجوز ادمین اجرا کنید</translation>
+        <source>Please run Sbox-XD as admin</source>
+        <translation type="unfinished">لطفا Sbox-XD را با مجوز ادمین اجرا کنید</translation>
     </message>
     <message>
         <source>Restart Proxy</source>

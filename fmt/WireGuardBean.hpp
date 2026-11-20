@@ -2,7 +2,7 @@
 
 #include "fmt/AbstractBean.hpp"
 
-namespace NekoGui_fmt {
+namespace SboxXD_fmt {
     class WireGuardBean : public AbstractBean {
     public:
         QString privateKey = "";
@@ -27,4 +27,4 @@ namespace NekoGui_fmt {
 
         QString ToShareLink() override;
     };
-} // namespace NekoGui_fmt
+} // namespace SboxXD_fmt

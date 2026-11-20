@@ -1,7 +1,7 @@
 NOTICE
 ======
 
-NekoBoxPro 是基于 **MatsuriDayo/NekoRay** 的修改版（fork）。
+Sbox-XD 是基于 **MatsuriDayo/NekoRay** 的修改版（fork）。
 
 上游项目
 --------
@@ -44,8 +44,19 @@ NekoRay 5.0.10 全部代码，后续修改均为独立提交。由于仓库历�
 
 兼容性保留
 ----------
-- `nekoray://` URL scheme、`nekoray_auth` HTTP 头、`nekoray-` 版本前缀
-  为兼容上游导入格式与既有部署而保留，非品牌声明。
+- 分享链接 scheme 现为 `sboxxd://`；导入端同时兼容旧版 `nekoray://` 链接
+- 内核 RPC 的 protobuf 字段名仍为 `enable_nekoray_connections` /
+  `nekoray_connections_json`（线协议标识，改动会影响与既有内核二进制的互通）
+- 依赖库 libneko（已并入 `go/libneko`）保留上游模块路径
+  `github.com/matsuridayo/libneko` 与包名 `neko_common` / `neko_log`
+- 运行时版本字符串前缀为 `sbox-xd-`
+
+改名记录
+--------
+2026-11：项目由 NekoBoxPro 更名为 Sbox-XD。可执行文件名（`Sbox-XD.exe` / `sbox-xd`）、
+内核进程名（`sboxxd_core`）、配置与数据目录、发布资产名一并变更。
+旧 NekoBoxPro 时代的数据目录不会自动迁移；便携版（配置位于程序目录 `config/`）
+在首次启动时会把 `groups/nekobox.json` 自动改名为 `groups/sboxxd.json` 以继承分组数据。
 
 第三方数据
 ----------

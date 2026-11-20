@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.5)
 
-# 版本号单一来源：nekoray_version.txt（cmake/nkr.cmake 也读同一文件生成 NKR_VERSION 宏）。
+# 版本号单一来源：sboxxd_version.txt（cmake/sbx.cmake 也读同一文件生成 SBX_VERSION 宏）。
 # 在此先读一次给 project()，避免 CMake 项目版本与运行时宏各写一份、发版漏改其中之一。
 # 先剔除空白与行尾 CR——Windows 工作区（core.autocrlf）下该文件是 CRLF，
 # 直接拿去比对会让版本号里混进 \r，故此处规范化后再校验。
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/nekoray_version.txt" NEKO_VERSION_RAW)
-string(REGEX REPLACE "[^0-9.]" "" NEKO_PROJECT_VERSION "${NEKO_VERSION_RAW}")
-if (NOT NEKO_PROJECT_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
-    message(FATAL_ERROR "nekoray_version.txt 不是 x.y.z 形式的版本号：'${NEKO_VERSION_RAW}'")
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/sboxxd_version.txt" SBOX_VERSION_RAW)
+string(REGEX REPLACE "[^0-9.]" "" SBOX_PROJECT_VERSION "${SBOX_VERSION_RAW}")
+if (NOT SBOX_PROJECT_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
+    message(FATAL_ERROR "sboxxd_version.txt 不是 x.y.z 形式的版本号：'${SBOX_VERSION_RAW}'")
 endif ()
 
-project(nekobox VERSION ${NEKO_PROJECT_VERSION} LANGUAGES CXX)
+project(sboxxd VERSION ${SBOX_PROJECT_VERSION} LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -31,7 +31,7 @@ if (NOT QT_VERSION_MAJOR)
 endif ()
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Svg LinguistTools)
 
-if (NKR_CROSS)
+if (SBX_CROSS)
     set_property(TARGET Qt5::moc PROPERTY IMPORTED_LOCATION /usr/bin/moc)
     set_property(TARGET Qt5::uic PROPERTY IMPORTED_LOCATION /usr/bin/uic)
     set_property(TARGET Qt5::rcc PROPERTY IMPORTED_LOCATION /usr/bin/rcc)
@@ -48,16 +48,16 @@ endif ()
 
 #### default prefix path ####
 
-if (NOT NKR_LIBS)
-    if (NKR_PACKAGE)
-        list(APPEND NKR_LIBS ${CMAKE_SOURCE_DIR}/libs/deps/package)
+if (NOT SBX_LIBS)
+    if (SBX_PACKAGE)
+        list(APPEND SBX_LIBS ${CMAKE_SOURCE_DIR}/libs/deps/package)
     else ()
-        list(APPEND NKR_LIBS ${CMAKE_SOURCE_DIR}/libs/deps/built)
+        list(APPEND SBX_LIBS ${CMAKE_SOURCE_DIR}/libs/deps/built)
     endif ()
 endif ()
 
-if (NOT NKR_DISABLE_LIBS)
-    list(APPEND CMAKE_PREFIX_PATH ${NKR_LIBS})
+if (NOT SBX_DISABLE_LIBS)
+    list(APPEND CMAKE_PREFIX_PATH ${SBX_LIBS})
 endif ()
 
 message("[CMAKE_PREFIX_PATH] ${CMAKE_PREFIX_PATH}")
@@ -66,55 +66,55 @@ message("[CMAKE_PREFIX_PATH] ${CMAKE_PREFIX_PATH}")
 list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_PREFIX_PATH})
 message("[CMAKE_FIND_ROOT_PATH] ${CMAKE_FIND_ROOT_PATH}")
 
-#### NKR ####
+#### SBX ####
 
 include("cmake/print.cmake")
-include("cmake/nkr.cmake")
+include("cmake/sbx.cmake")
 
 find_package(Threads)
 
-#### NKR EXTERNAL ####
+#### SBX EXTERNAL ####
 
-if (NKR_NO_EXTERNAL)
-    set(NKR_NO_GRPC 1)
-    set(NKR_NO_YAML 1)
-    set(NKR_NO_ZXING 1)
-    set(NKR_NO_QHOTKEY 1)
+if (SBX_NO_EXTERNAL)
+    set(SBX_NO_GRPC 1)
+    set(SBX_NO_YAML 1)
+    set(SBX_NO_ZXING 1)
+    set(SBX_NO_QHOTKEY 1)
 endif ()
 
 # grpc
-if (NKR_NO_GRPC)
-    nkr_add_compile_definitions(NKR_NO_GRPC)
+if (SBX_NO_GRPC)
+    sbx_add_compile_definitions(SBX_NO_GRPC)
 else ()
     # My proto
     include("cmake/myproto.cmake")
-    list(APPEND NKR_EXTERNAL_TARGETS myproto)
+    list(APPEND SBX_EXTERNAL_TARGETS myproto)
 endif ()
 
 # yaml-cpp
-if (NKR_NO_YAML)
-    nkr_add_compile_definitions(NKR_NO_YAML)
+if (SBX_NO_YAML)
+    sbx_add_compile_definitions(SBX_NO_YAML)
 else ()
     find_package(yaml-cpp CONFIG REQUIRED) # only Release is built
-    list(APPEND NKR_EXTERNAL_TARGETS yaml-cpp)
+    list(APPEND SBX_EXTERNAL_TARGETS yaml-cpp)
 endif ()
 
 # zxing-cpp
-if (NKR_NO_ZXING)
-    nkr_add_compile_definitions(NKR_NO_ZXING)
+if (SBX_NO_ZXING)
+    sbx_add_compile_definitions(SBX_NO_ZXING)
 else ()
     find_package(ZXing CONFIG REQUIRED)
-    list(APPEND NKR_EXTERNAL_TARGETS ZXing::ZXing)
+    list(APPEND SBX_EXTERNAL_TARGETS ZXing::ZXing)
 endif ()
 
 # QHotkey (static submodule)
-if (NKR_NO_QHOTKEY)
-    nkr_add_compile_definitions(NKR_NO_QHOTKEY)
+if (SBX_NO_QHOTKEY)
+    sbx_add_compile_definitions(SBX_NO_QHOTKEY)
 else ()
     set(QHOTKEY_INSTALL OFF)
     set(BUILD_SHARED_LIBS OFF)
     add_subdirectory(3rdparty/QHotkey)
-    list(APPEND NKR_EXTERNAL_TARGETS qhotkey)
+    list(APPEND SBX_EXTERNAL_TARGETS qhotkey)
 endif ()
 
 #### debug print ####
@@ -133,8 +133,8 @@ set(PROJECT_SOURCES
         ${PLATFORM_SOURCES}
 
         main/main.cpp
-        main/NekoGui.cpp
-        main/NekoGui_Utils.cpp
+        main/SboxXD.cpp
+        main/SboxXD_Utils.cpp
         main/HTTPRequestHelper.cpp
 
         3rdparty/base64.cpp
@@ -240,30 +240,30 @@ set(PROJECT_SOURCES
         ui/widget/GroupItem.h
         ui/widget/GroupItem.ui
 
-        res/neko.qrc
+        res/sboxxd.qrc
         res/theme/feiyangqingyun/qss.qrc
         ${QV2RAY_RC}
 )
 
 # Qt exe
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(nekobox
+    qt_add_executable(sboxxd
             MANUAL_FINALIZATION
             ${PROJECT_SOURCES}
     )
     # Define target properties for Android with Qt 6 as:
-    #    set_property(TARGET nekobox APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+    #    set_property(TARGET sboxxd APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
     #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
     # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else ()
     if (ANDROID)
-        add_library(nekobox SHARED
+        add_library(sboxxd SHARED
                 ${PROJECT_SOURCES}
         )
         # Define properties for Android with Qt 5 after find_package() calls as:
         #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else ()
-        add_executable(nekobox
+        add_executable(sboxxd
                 ${PROJECT_SOURCES}
         )
     endif ()
@@ -271,18 +271,18 @@ endif ()
 
 # Target
 
-set_property(TARGET nekobox PROPERTY AUTOUIC ON)
-set_property(TARGET nekobox PROPERTY AUTOMOC ON)
-set_property(TARGET nekobox PROPERTY AUTORCC ON)
+set_property(TARGET sboxxd PROPERTY AUTOUIC ON)
+set_property(TARGET sboxxd PROPERTY AUTOMOC ON)
+set_property(TARGET sboxxd PROPERTY AUTORCC ON)
 
-set_target_properties(nekobox PROPERTIES
+set_target_properties(sboxxd PROPERTIES
         WIN32_EXECUTABLE TRUE
 )
 
 if (WIN32)
-    set_target_properties(nekobox PROPERTIES OUTPUT_NAME "NekoBoxPro")
+    set_target_properties(sboxxd PROPERTIES OUTPUT_NAME "Sbox-XD")
 else ()
-    set_target_properties(nekobox PROPERTIES OUTPUT_NAME "nekoboxpro")
+    set_target_properties(sboxxd PROPERTIES OUTPUT_NAME "sbox-xd")
 endif ()
 
 # Target Source Translations
@@ -296,23 +296,23 @@ set(LUPDATE_OPTIONS
         -locations none -no-obsolete
 )
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_lupdate(nekobox TS_FILES ${TS_FILES} OPTIONS ${LUPDATE_OPTIONS})
-    qt_add_lrelease(nekobox TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
+    qt_add_lupdate(sboxxd TS_FILES ${TS_FILES} OPTIONS ${LUPDATE_OPTIONS})
+    qt_add_lrelease(sboxxd TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
 else ()
     qt5_create_translation(QM_FILES ${PROJECT_SOURCES} ${TS_FILES} OPTIONS ${LUPDATE_OPTIONS})
 endif ()
 configure_file(translations/translations.qrc ${CMAKE_BINARY_DIR} COPYONLY)
-target_sources(nekobox PRIVATE ${CMAKE_BINARY_DIR}/translations.qrc)
+target_sources(sboxxd PRIVATE ${CMAKE_BINARY_DIR}/translations.qrc)
 
 # Target Link
 
-target_link_libraries(nekobox PRIVATE
+target_link_libraries(sboxxd PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Svg
         Threads::Threads
-        ${NKR_EXTERNAL_TARGETS}
+        ${SBX_EXTERNAL_TARGETS}
         ${PLATFORM_LIBRARIES}
 )
 
 if (QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(nekobox)
+    qt_finalize_executable(sboxxd)
 endif ()

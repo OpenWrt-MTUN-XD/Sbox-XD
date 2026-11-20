@@ -2,44 +2,44 @@
 
 version="$1"
 
-mkdir -p nekoray/DEBIAN
-mkdir -p nekoray/opt
-cp -r linux64 nekoray/opt/
-mv nekoray/opt/linux64 nekoray/opt/nekobox
-rm -rf nekoray/opt/nekobox/usr
-rm nekoray/opt/nekobox/launcher
+mkdir -p sboxxd/DEBIAN
+mkdir -p sboxxd/opt
+cp -r linux64 sboxxd/opt/
+mv sboxxd/opt/linux64 sboxxd/opt/sbox-xd
+rm -rf sboxxd/opt/sbox-xd/usr
+rm -f sboxxd/opt/sbox-xd/launcher
 
 # basic
-cat >nekoray/DEBIAN/control <<-EOF
-Package: nekoray
+cat >sboxxd/DEBIAN/control <<-EOF
+Package: sbox-xd
 Version: $version
 Architecture: amd64
 Maintainer: internetdroid
 Depends: libxcb-xinerama0, libqt5core5a, libqt5gui5, libqt5network5, libqt5widgets5, libqt5svg5, libqt5x11extras5, desktop-file-utils
-Description: Qt based cross-platform GUI proxy configuration manager (backend: v2ray / sing-box)
+Description: Qt based cross-platform GUI proxy configuration manager (backend: sing-box)
 EOF
 
-cat >nekoray/DEBIAN/postinst <<-EOF
-if [ ! -s /usr/share/applications/nekoray.desktop ]; then
-    cat >/usr/share/applications/nekoray.desktop<<-END
+cat >sboxxd/DEBIAN/postinst <<-EOF
+if [ ! -s /usr/share/applications/sbox-xd.desktop ]; then
+    cat >/usr/share/applications/sbox-xd.desktop<<-END
 [Desktop Entry]
-Name=nekoray
+Name=Sbox-XD
 Comment=Qt based cross-platform GUI proxy configuration manager (backend: sing-box)
-Exec=sh -c "PATH=/opt/nekobox:\$PATH /opt/nekobox/nekobox -appdata"
-Icon=/opt/nekobox/nekoboxpro.png
+Exec=sh -c "PATH=/opt/sbox-xd:\$PATH /opt/sbox-xd/sbox-xd -appdata"
+Icon=/opt/sbox-xd/sbox-xd.png
 Terminal=false
 Type=Application
 Categories=Network;Application;
 END
 fi
 
-setcap cap_net_admin=ep /opt/nekobox/nekobox_core
+setcap cap_net_admin=ep /opt/sbox-xd/sboxxd_core
 
 update-desktop-database
 EOF
 
-sudo chmod 0755 nekoray/DEBIAN/postinst
+sudo chmod 0755 sboxxd/DEBIAN/postinst
 
 # desktop && PATH
 
-sudo dpkg-deb -Zxz --build nekoray
+sudo dpkg-deb -Zxz --build sboxxd

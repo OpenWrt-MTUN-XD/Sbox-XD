@@ -267,8 +267,8 @@
         <translation>Скопировать ссылки на профиль</translation>
     </message>
     <message>
-        <source>Copy profile share links (Neko Links)</source>
-        <translation>Скопировать ссылки на профиль (Neko links)</translation>
+        <source>Copy profile share links (Sbox-XD Links)</source>
+        <translation>Скопировать ссылки на профиль (Sbox-XD links)</translation>
     </message>
     <message>
         <source>Copied</source>
@@ -682,9 +682,9 @@ For more information, see the document &quot;Configuration/DNS&quot;.</source>
     </message>
     <message>
         <source>Add a tun inbound to the profile startup, instead of using two processes.
-This needs to be run NekoBoxPro with administrator privileges.</source>
+This needs to be run Sbox-XD with administrator privileges.</source>
         <translation>Добавить inbound c Tun в конфигурацию профиля вместо того, чтобы использовать два отдельных процесса.
-Для этого необходимо запускать NekoBoxPro c правами администратора.</translation>
+Для этого необходимо запускать Sbox-XD c правами администратора.</translation>
     </message>
     <message>
         <source>Internal Tun</source>
@@ -703,8 +703,8 @@ This needs to be run NekoBoxPro with administrator privileges.</source>
         <translation>Пропускать процессы</translation>
     </message>
     <message>
-        <source>Whether blacklisted or whitelisted, your traffic will be handled by nekobox_core (sing-tun). This is NOT equal to &quot;process mode&quot; of some software.</source>
-        <translation>При использовании белого или черного списка, ваш трафик будет обработан ядром nekobox (sign-tun). Это НЕ эквивалент &quot;process mode&quot; как в некотором ПО.</translation>
+        <source>Whether blacklisted or whitelisted, your traffic will be handled by sboxxd_core (sing-tun). This is NOT equal to &quot;process mode&quot; of some software.</source>
+        <translation>При использовании белого или черного списка, ваш трафик будет обработан ядром sboxxd (sign-tun). Это НЕ эквивалент &quot;process mode&quot; как в некотором ПО.</translation>
     </message>
     <message>
         <source>Whitelist mode</source>
@@ -723,14 +723,14 @@ This needs to be run NekoBoxPro with administrator privileges.</source>
         <translation>Проксировать процессы</translation>
     </message>
     <message>
-        <source>If you have trouble starting VPN, you can force reset nekobox_core process here.
+        <source>If you have trouble starting VPN, you can force reset sboxxd_core process here.
 
 If still not working, see documentation for more information.
-https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</source>
-        <translation>Если у вас проблемы с запуском VPN, можно принудительно перезапустить процесс nekobox-core.
+https://github.com/OpenWrt-MTUN-XD/Sbox-XD/tree/main/docs</source>
+        <translation>Если у вас проблемы с запуском VPN, можно принудительно перезапустить процесс sboxxd-core.
 
 Если ничего по-прежнему не работает, ознакомьтесь с документацией:
-https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</translation>
+https://github.com/OpenWrt-MTUN-XD/Sbox-XD/tree/main/docs</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -1282,8 +1282,8 @@ https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</translation>
         <translation>Выбрать всё</translation>
     </message>
     <message>
-        <source>Copy links of selected (Neko Links)</source>
-        <translation>Скопировать ссылки для выбранных (Neko links)</translation>
+        <source>Copy links of selected (Sbox-XD Links)</source>
+        <translation>Скопировать ссылки для выбранных (Sbox-XD links)</translation>
     </message>
     <message>
         <source>Copy links of selected</source>
@@ -1359,8 +1359,8 @@ https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</translation>
         <translation>Импортирован(ы) %1 профиль(ей)</translation>
     </message>
     <message>
-        <source>Please run NekoBoxPro as admin</source>
-        <translation>Пожалуйста, запустите NekoBoxPro с правами администратора</translation>
+        <source>Please run Sbox-XD as admin</source>
+        <translation>Пожалуйста, запустите Sbox-XD с правами администратора</translation>
     </message>
     <message>
         <source>Current server is incompatible with Tun. Please stop the server first, enable Tun Mode, and then restart.</source>

@@ -1,9 +1,9 @@
-## 构建 nekobox_core
+## 构建 sboxxd_core
 
 ### 目录结构
 
 ```
-  | nekobox
+  | sboxxd
   |   go/cmd/*
   | sing-box-extra
   | sing-box

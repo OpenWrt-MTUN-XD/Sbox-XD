@@ -21,8 +21,8 @@ pushd go/cmd/updater
 [ "$GOOS" == "linux" ] && mv $DEST/updater $DEST/launcher || true
 popd
 
-#### Go: nekobox_core ####
-pushd go/cmd/nekobox_core
+#### Go: sboxxd_core ####
+pushd go/cmd/sboxxd_core
 # 注意: sing-box 官方 1.14 起 with_ech tag 已废弃(ECH 并入 Go 标准库), 新增 with_grpc
 SINGBOX_VERSION="v1.14.1" # 升级 sing-box 时同步修改
 go build -v -o $DEST -trimpath -ldflags "-w -s -X github.com/matsuridayo/libneko/neko_common.Version_neko=$version_standalone -X github.com/sagernet/sing-box/constant.Version=$SINGBOX_VERSION" -tags "with_clash_api,with_gvisor,with_quic,with_wireguard,with_utls,with_grpc"

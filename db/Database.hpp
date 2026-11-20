@@ -1,10 +1,10 @@
 #pragma once
 
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 #include "ProxyEntity.hpp"
 #include "Group.hpp"
 
-namespace NekoGui {
+namespace SboxXD {
     class ProfileManager : private JsonStore {
     public:
         // JsonStore
@@ -59,4 +59,4 @@ namespace NekoGui {
     };
 
     extern ProfileManager *profileManager;
-} // namespace NekoGui
+} // namespace SboxXD

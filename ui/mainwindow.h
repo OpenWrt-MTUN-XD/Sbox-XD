@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 
 #ifndef MW_INTERFACE
 
@@ -23,7 +23,7 @@
 
 #endif
 
-namespace NekoGui_sys {
+namespace SboxXD_sys {
     class CoreProcess;
 }
 
@@ -49,13 +49,13 @@ public:
 
     void refresh_status(const QString &traffic_update = "");
 
-    void neko_start(int _id = -1);
+    void sbx_start(int _id = -1);
 
-    void neko_stop(bool crash = false, bool sem = false);
+    void sbx_stop(bool crash = false, bool sem = false);
 
-    void neko_set_spmode_system_proxy(bool enable, bool save = true);
+    void sbx_set_spmode_system_proxy(bool enable, bool save = true);
 
-    void neko_set_spmode_vpn(bool enable, bool save = true);
+    void sbx_set_spmode_vpn(bool enable, bool save = true);
 
     void show_log_impl(const QString &log);
 
@@ -107,11 +107,11 @@ private slots:
 
     void on_menu_copy_links_triggered();
 
-    void on_menu_copy_links_nkr_triggered();
+    void on_menu_copy_links_sboxxd_triggered();
 
     void on_menu_export_config_triggered();
 
-    void display_qr_link(bool nkrFormat = false);
+    void display_qr_link(bool sboxxdFormat = false);
 
     void on_menu_scan_qr_triggered();
 
@@ -141,7 +141,7 @@ private:
     QShortcut *shortcut_ctrl_f = new QShortcut(QKeySequence("Ctrl+F"), this);
     QShortcut *shortcut_esc = new QShortcut(QKeySequence("Esc"), this);
     //
-    NekoGui_sys::CoreProcess *core_process;
+    SboxXD_sys::CoreProcess *core_process;
     qint64 vpn_pid = 0;
     //
     bool qvLogAutoScoll = true;
@@ -149,7 +149,7 @@ private:
     //
     QString title_error;
     int icon_status = -1;
-    std::shared_ptr<NekoGui::ProxyEntity> running;
+    std::shared_ptr<SboxXD::ProxyEntity> running;
     QString traffic_update_cache;
     QTime last_test_time;
     //
@@ -161,9 +161,9 @@ private:
     QSemaphore sem_stopped;
     int exit_reason = 0;
 
-    QList<std::shared_ptr<NekoGui::ProxyEntity>> get_now_selected_list();
+    QList<std::shared_ptr<SboxXD::ProxyEntity>> get_now_selected_list();
 
-    QList<std::shared_ptr<NekoGui::ProxyEntity>> get_selected_or_group();
+    QList<std::shared_ptr<SboxXD::ProxyEntity>> get_selected_or_group();
 
     void dialog_message_impl(const QString &sender, const QString &info);
 

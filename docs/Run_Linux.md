@@ -2,22 +2,22 @@
 
 ### 方式一：AppImage（推荐）
 
-下载 `NekoBoxPro-Linux-x64.AppImage`，赋予执行权限后直接运行：
+下载 `Sbox-XD-Linux-x64.AppImage`，赋予执行权限后直接运行：
 
 ```shell
-chmod +x NekoBoxPro-Linux-x64.AppImage
-./NekoBoxPro-Linux-x64.AppImage
+chmod +x Sbox-XD-Linux-x64.AppImage
+./Sbox-XD-Linux-x64.AppImage
 ```
 
 AppImage 自带 Qt 运行库，开箱即用，无需额外安装依赖。
 
 ### 方式二：便携包（tar.gz）
 
-下载 `NekoBoxPro-Linux64.tar.gz`，解压后运行目录中的 `nekoboxpro`：
+下载 `Sbox-XD-Linux64.tar.gz`，解压后运行目录中的 `sbox-xd`：
 
 ```shell
-tar xzf NekoBoxPro-Linux64.tar.gz
-./nekoboxpro/nekoboxpro
+tar xzf Sbox-XD-Linux64.tar.gz
+./sbox-xd/sbox-xd
 ```
 
 ### 其他发行版说明
@@ -31,8 +31,8 @@ tar xzf NekoBoxPro-Linux64.tar.gz
 
 便携包解压后，目录内包含：
 
-- `nekoboxpro`：主程序（GUI）
-- `nekobox_core`：sing-box 内核（RPC 模式）
+- `sbox-xd`：主程序（GUI）
+- `sboxxd_core`：sing-box 内核（RPC 模式）
 - `sing-box`：sing-box 命令行内核（自定义核心）
 - `updater`：自动更新程序
 - `geoip.dat` / `geoip.db` / `geosite.dat` / `geosite.db`：geo 规则数据

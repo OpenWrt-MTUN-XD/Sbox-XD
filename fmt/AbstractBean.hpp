@@ -5,9 +5,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 
-namespace NekoGui_fmt {
+namespace SboxXD_fmt {
     struct CoreObjOutboundBuildResult {
     public:
         QJsonObject outbound;
@@ -45,7 +45,7 @@ namespace NekoGui_fmt {
 
         //
 
-        QString ToNekorayShareLink(const QString &type);
+        QString ToSboxXDShareLink(const QString &type);
 
         void ResolveDomainToIP(const std::function<void()> &onFinished);
 
@@ -72,4 +72,4 @@ namespace NekoGui_fmt {
         virtual QString ToShareLink() { return {}; };
     };
 
-} // namespace NekoGui_fmt
+} // namespace SboxXD_fmt

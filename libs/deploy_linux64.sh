@@ -9,8 +9,8 @@ rm -rf $DEST
 mkdir -p $DEST
 
 #### copy binary ####
-# CMake 目标产物名为 nekoboxpro（原为 nekobox，改名后此处未同步）
-cp $BUILD/nekoboxpro $DEST
+# 产物名由 CMakeLists.txt 的 OUTPUT_NAME 决定：Windows 为 Sbox-XD.exe，Linux 为 sbox-xd
+cp $BUILD/sbox-xd $DEST
 
 #### Download: prebuilt runtime ####
 curl -Lso usr.zip https://github.com/MatsuriDayo/nekoray_qt_runtime/releases/download/20220503/20230202-5.12.8-ubuntu20.04-linux64.zip

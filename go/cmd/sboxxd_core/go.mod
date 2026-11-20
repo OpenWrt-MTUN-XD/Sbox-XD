@@ -1,4 +1,4 @@
-module nekobox_core
+module sboxxd_core
 
 go 1.25.5
 

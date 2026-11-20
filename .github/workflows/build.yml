@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  NEKO_VERSION: 5.0.22
+  SBOX_VERSION: 5.0.22
   # 内核 = 上游 SagerNet/sing-box 的固定 tag + patches/ 里的补丁（打完补丁即等于以前的 fork）
   SING_BOX_VERSION: v1.14.4
   SING_BOX_PATCH: sing-box-0001-platform-log-disable-colors.patch
@@ -39,15 +39,15 @@ jobs:
         with:
           submodules: recursive
 
-      # 版本号有多个落点：nekoray_version.txt（运行时 NKR_VERSION 宏与 CMake 项目版本的唯一来源）、
-      # 本工作流的 NEKO_VERSION（Go ldflags 与 Release 文案）。发版时漏改其中之一会静默发出
+      # 版本号有多个落点：sboxxd_version.txt（运行时 SBX_VERSION 宏与 CMake 项目版本的唯一来源）、
+      # 本工作流的 SBOX_VERSION（Go ldflags 与 Release 文案）。发版时漏改其中之一会静默发出
       # 版本号自相矛盾的产物，这里直接失败。
       - name: Verify version consistency
         shell: bash
         run: |
-          FILE_VER="$(tr -d ' \t\r\n' < nekoray_version.txt)"
-          if [ "$FILE_VER" != "${{ env.NEKO_VERSION }}" ]; then
-            echo "::error::版本号不一致：nekoray_version.txt='$FILE_VER' 但工作流 NEKO_VERSION='${{ env.NEKO_VERSION }}'"
+          FILE_VER="$(tr -d ' \t\r\n' < sboxxd_version.txt)"
+          if [ "$FILE_VER" != "${{ env.SBOX_VERSION }}" ]; then
+            echo "::error::版本号不一致：sboxxd_version.txt='$FILE_VER' 但工作流 SBOX_VERSION='${{ env.SBOX_VERSION }}'"
             exit 1
           fi
           echo "version ok: $FILE_VER"
@@ -116,20 +116,20 @@ jobs:
           verify_geo_sha geosite.dat geosite.dat.sha256sum geosite.dat
           rm -f *.sha256sum
 
-      - name: Build nekobox_core
+      - name: Build sboxxd_core
         shell: bash
         run: |
-          cd "$GITHUB_WORKSPACE/go/cmd/nekobox_core"
-          go build -o "$GITHUB_WORKSPACE/deployment/windows64/nekobox_core.exe" \
+          cd "$GITHUB_WORKSPACE/go/cmd/sboxxd_core"
+          go build -o "$GITHUB_WORKSPACE/deployment/windows64/sboxxd_core.exe" \
             -trimpath \
-            -ldflags "-w -s -X github.com/matsuridayo/libneko/neko_common.Version_neko=nekoray-${{ env.NEKO_VERSION }} -X github.com/sagernet/sing-box/constant.Version=${{ env.SING_BOX_VERSION }}" \
+            -ldflags "-w -s -X github.com/matsuridayo/libneko/neko_common.Version_neko=sbox-xd-${{ env.SBOX_VERSION }} -X github.com/sagernet/sing-box/constant.Version=${{ env.SING_BOX_VERSION }}" \
             -tags "with_clash_api,with_gvisor,with_quic,with_wireguard,with_utls,with_grpc"
 
       - name: Build sing-box CLI (custom core)
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE/../sing-box"
-          # -trimpath -ldflags "-w -s"：与 nekobox_core 一致，去除路径、DWARF 与符号表
+          # -trimpath -ldflags "-w -s"：与 sboxxd_core 一致，去除路径、DWARF 与符号表
           go build -trimpath -ldflags "-w -s" -o "$GITHUB_WORKSPACE/deployment/windows64/sing-box.exe" ./cmd/sing-box
 
       - name: Build updater
@@ -162,7 +162,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: $GITHUB_WORKSPACE/deps/built
-          key: neko-deps-${{ runner.os }}-v2
+          key: sboxxd-deps-${{ runner.os }}-v2
 
       # 缓存命中时 Build deps 整步会被跳过，DEPS_ROOT 必须在这里无条件导出，
       # 否则 Configure 步骤拿到空值、构建失败。
@@ -195,7 +195,7 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="$DEPS/built" -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BLACKBOX_TESTS=OFF
           cmake --build "$DEPS/build-zxing" -j4 --target install
 
-      - name: Configure & build GUI (nekobox.exe)
+      - name: Configure & build GUI (sboxxd.exe)
         shell: bash
         run: |
           mkdir -p build
@@ -203,72 +203,73 @@ jobs:
           cmake -GNinja -DQT_VERSION_MAJOR=6 -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH="$QT_ROOT;$DEPS_ROOT" -DQt6_DIR="$QT_ROOT/lib/cmake/Qt6" ..
           ninja -j4
-          cp NekoBoxPro.exe "$GITHUB_WORKSPACE/deployment/windows64/"
+          cp Sbox-XD.exe "$GITHUB_WORKSPACE/deployment/windows64/"
 
       - name: Deploy Qt runtime (windeployqt)
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE/deployment/windows64"
           windeployqt --release --no-translations --no-system-d3d-compiler \
-            --no-opengl-sw --no-compiler-runtime NekoBoxPro.exe
+            --no-opengl-sw --no-compiler-runtime Sbox-XD.exe
           cp "$QT_ROOT/translations/qtbase_zh_CN.qm" .
 
       - name: Package zip (exclude user config)
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE/deployment/windows64"
-          rm -rf config stderr.txt nekoboxpro.png
-          "C:/Program Files/7-Zip/7z.exe" a -tzip -mx5 "$GITHUB_WORKSPACE/NekoBoxPro-Windows64.zip" ./*
+          rm -rf config stderr.txt sbox-xd.png
+          "C:/Program Files/7-Zip/7z.exe" a -tzip -mx5 "$GITHUB_WORKSPACE/Sbox-XD-Windows64.zip" ./*
 
       - name: Sign release asset (minisign)
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         env:
-          NEKO_MINISIGN_SECRET_KEY: ${{ secrets.NEKO_MINISIGN_SECRET_KEY }}
+          SBOX_MINISIGN_SECRET_KEY: ${{ secrets.SBOX_MINISIGN_SECRET_KEY }}
         run: |
-          if [ -z "$NEKO_MINISIGN_SECRET_KEY" ]; then
-            echo "::error::NEKO_MINISIGN_SECRET_KEY 未配置，禁止发布未签名资产。"
+          if [ -z "$SBOX_MINISIGN_SECRET_KEY" ]; then
+            echo "::error::SBOX_MINISIGN_SECRET_KEY 未配置，禁止发布未签名资产。"
             echo "::error::updater 对无签名更新一律拒绝（fail-closed），发布未签名资产等于发布一个客户端无法自动升级的版本。"
             exit 1
           fi
           # 私钥是更新信任锚，收紧权限并在任何退出路径（含失败中断）清理
           umask 077
-          trap 'rm -f /tmp/nekobox.key' EXIT
-          printf '%s\n' "$NEKO_MINISIGN_SECRET_KEY" > /tmp/nekobox.key
+          trap 'rm -f /tmp/sboxxd.key' EXIT
+          printf '%s\n' "$SBOX_MINISIGN_SECRET_KEY" > /tmp/sboxxd.key
           cd "$GITHUB_WORKSPACE/go/cmd/signasset"
           go build -o "$GITHUB_WORKSPACE/signasset-bin" .
           cd "$GITHUB_WORKSPACE"
-          ./signasset-bin /tmp/nekobox.key NekoBoxPro-Windows64.zip
-          rm -f /tmp/nekobox.key signasset-bin*
+          ./signasset-bin /tmp/sboxxd.key Sbox-XD-Windows64.zip
+          rm -f /tmp/sboxxd.key signasset-bin*
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: nekobox-windows64
+          name: sboxxd-windows64
           path: |
-            NekoBoxPro-Windows64.zip
-            NekoBoxPro-Windows64.zip.minisig
+            Sbox-XD-Windows64.zip
+            Sbox-XD-Windows64.zip.minisig
 
       - name: Publish GitHub Release (Windows)
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            NekoBoxPro-Windows64.zip
-            NekoBoxPro-Windows64.zip.minisig
+            Sbox-XD-Windows64.zip
+            Sbox-XD-Windows64.zip.minisig
           body: |
-            **NekoBoxPro v${{ env.NEKO_VERSION }}** 已发布 / Released.
+            **Sbox-XD v${{ env.SBOX_VERSION }}** 已发布 / Released.
+
+            **本版要点：项目更名为 Sbox-XD（原 NekoBoxPro）**
+
+            - 可执行文件：`NekoBoxPro.exe` → `Sbox-XD.exe`（Linux：`nekoboxpro` → `sbox-xd`）
+            - 内核进程：`nekobox_core` → `sboxxd_core`；数据目录、日志名、单实例标识同步改名
+            - 自动更新源与发布资产名改为 `Sbox-XD-*`（更新仍强制校验 minisign 签名）
+            - 便携版升级会自动继承旧分组数据（`config/groups/nekobox.json` → `groups/sboxxd.json`）；
+              使用 `-appdata` 或安装包的用户，数据目录会变为 `%LOCALAPPDATA%\Sbox-XD`，需重新导入或手动迁移
 
             单内核 sing-box 客户端 · 稳定优先 · 最小复杂度
 
-            **本版要点：内核依赖收敛（对使用者无行为变化）**
-
-            - libneko 由外部仓库并入本仓库 `go/libneko`
-            - sing-box 改为「上游 SagerNet/sing-box 固定 tag + `patches/` 补丁」，
-              不再维护名为 sing-box 的 fork 仓库；补丁只有 1 行（平台日志不输出 ANSI 颜色），
-              以补丁文件形式公开在本仓库
-
-            更新日志 / Changelog: https://github.com/NekoBoxHQ/NekoBoxPro/releases
+            更新日志 / Changelog: https://github.com/OpenWrt-MTUN-XD/Sbox-XD/releases
 
       - name: Notify Telegram Group
         # 手动触发并勾选 telegram_test 时也发送，用于在不发版的情况下验证消息编码。
@@ -288,7 +289,7 @@ jobs:
           # Bash's MSYS build. When MSYS launches a native program it converts
           # argv to that process's code page, and CP1252 cannot represent CJK, so
           # every Chinese character collapsed to a single '?' -- the message read
-          # "NekoBoxPro v5.0.12 ???". The same mismatch showed up from the other
+          # "Sbox-XD v5.0.12 ???". The same mismatch showed up from the other
           # side when the body was passed as a file: a POSIX path went to native
           # curl, which could not open it and exited 26.
           #
@@ -300,11 +301,11 @@ jobs:
           #     path, in its argument vector.
           # \xe5\xb7\xb2\xe5\x8f\x91\xe5\xb8\x83 below is the Chinese for "released".
           MSG_FILE="$(mktemp)"
-          printf '<b>NekoBoxPro v%s \xe5\xb7\xb2\xe5\x8f\x91\xe5\xb8\x83</b>\n\nsing-box %s\nWindows / Linux\n%s' \
-            "${{ env.NEKO_VERSION }}" \
+          printf '<b>Sbox-XD v%s \xe5\xb7\xb2\xe5\x8f\x91\xe5\xb8\x83</b>\n\nsing-box %s\nWindows / Linux\n%s' \
+            "${{ env.SBOX_VERSION }}" \
             "${{ env.SING_BOX_VERSION }}" \
-            "https://github.com/NekoBoxHQ/NekoBoxPro" > "$MSG_FILE"
-          # Self-check: 109 bytes while NEKO_VERSION and SING_BOX_VERSION keep
+            "https://github.com/OpenWrt-MTUN-XD/Sbox-XD" > "$MSG_FILE"
+          # Self-check: 109 bytes while SBOX_VERSION and SING_BOX_VERSION keep
           # their current lengths. If this number is ever off, the body was already
           # damaged before the request left the runner, so the fault is here and
           # not on Telegram's side.
@@ -328,15 +329,15 @@ jobs:
         with:
           submodules: recursive
 
-      # 版本号有多个落点：nekoray_version.txt（运行时 NKR_VERSION 宏与 CMake 项目版本的唯一来源）、
-      # 本工作流的 NEKO_VERSION（Go ldflags 与 Release 文案）。发版时漏改其中之一会静默发出
+      # 版本号有多个落点：sboxxd_version.txt（运行时 SBX_VERSION 宏与 CMake 项目版本的唯一来源）、
+      # 本工作流的 SBOX_VERSION（Go ldflags 与 Release 文案）。发版时漏改其中之一会静默发出
       # 版本号自相矛盾的产物，这里直接失败。
       - name: Verify version consistency
         shell: bash
         run: |
-          FILE_VER="$(tr -d ' \t\r\n' < nekoray_version.txt)"
-          if [ "$FILE_VER" != "${{ env.NEKO_VERSION }}" ]; then
-            echo "::error::版本号不一致：nekoray_version.txt='$FILE_VER' 但工作流 NEKO_VERSION='${{ env.NEKO_VERSION }}'"
+          FILE_VER="$(tr -d ' \t\r\n' < sboxxd_version.txt)"
+          if [ "$FILE_VER" != "${{ env.SBOX_VERSION }}" ]; then
+            echo "::error::版本号不一致：sboxxd_version.txt='$FILE_VER' 但工作流 SBOX_VERSION='${{ env.SBOX_VERSION }}'"
             exit 1
           fi
           echo "version ok: $FILE_VER"
@@ -405,20 +406,20 @@ jobs:
           verify_geo_sha geosite.dat geosite.dat.sha256sum geosite.dat
           rm -f *.sha256sum
 
-      - name: Build nekobox_core
+      - name: Build sboxxd_core
         shell: bash
         run: |
-          cd "$GITHUB_WORKSPACE/go/cmd/nekobox_core"
-          go build -o "$GITHUB_WORKSPACE/deployment/linux64/nekobox_core" \
+          cd "$GITHUB_WORKSPACE/go/cmd/sboxxd_core"
+          go build -o "$GITHUB_WORKSPACE/deployment/linux64/sboxxd_core" \
             -trimpath \
-            -ldflags "-w -s -X github.com/matsuridayo/libneko/neko_common.Version_neko=nekoray-${{ env.NEKO_VERSION }} -X github.com/sagernet/sing-box/constant.Version=${{ env.SING_BOX_VERSION }}" \
+            -ldflags "-w -s -X github.com/matsuridayo/libneko/neko_common.Version_neko=sbox-xd-${{ env.SBOX_VERSION }} -X github.com/sagernet/sing-box/constant.Version=${{ env.SING_BOX_VERSION }}" \
             -tags "with_clash_api,with_gvisor,with_quic,with_wireguard,with_utls,with_grpc"
 
       - name: Build sing-box CLI (custom core)
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE/../sing-box"
-          # -trimpath -ldflags "-w -s"：与 nekobox_core 一致，去除路径、DWARF 与符号表
+          # -trimpath -ldflags "-w -s"：与 sboxxd_core 一致，去除路径、DWARF 与符号表
           go build -trimpath -ldflags "-w -s" -o "$GITHUB_WORKSPACE/deployment/linux64/sing-box" ./cmd/sing-box
 
       - name: Build updater
@@ -448,7 +449,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: $GITHUB_WORKSPACE/deps/built
-          key: neko-deps-${{ runner.os }}-v2
+          key: sboxxd-deps-${{ runner.os }}-v2
 
       # 缓存命中时 Build deps 整步会被跳过，DEPS_ROOT 必须在这里无条件导出，
       # 否则 Configure 步骤拿到空值、构建失败。
@@ -493,7 +494,7 @@ jobs:
             libglib2.0-0 libharfbuzz0b libx11-6 libx11-xcb1 libxext6 libxfixes3 \
             libxi6 libxrender1 libsm6 libice6 libssl3 libxkbcommon0 libwayland-client0
 
-      - name: Configure & build GUI (nekobox)
+      - name: Configure & build GUI (sboxxd)
         shell: bash
         run: |
           mkdir -p build
@@ -501,13 +502,13 @@ jobs:
           cmake -GNinja -DQT_VERSION_MAJOR=6 -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH="$Qt6_DIR/../../..;$DEPS_ROOT" ..
           ninja -j4
-          cp nekoboxpro "$GITHUB_WORKSPACE/deployment/linux64/"
+          cp sbox-xd "$GITHUB_WORKSPACE/deployment/linux64/"
 
       - name: Stage runtime assets
         shell: bash
         run: |
           cd "$GITHUB_WORKSPACE/deployment/linux64"
-          cp "$GITHUB_WORKSPACE/res/public/nekoboxpro.png" .
+          cp "$GITHUB_WORKSPACE/res/public/sbox-xd.png" .
 
       - name: Build AppImage
         shell: bash
@@ -525,15 +526,15 @@ jobs:
           echo "15106be885c1c48a021198e7e1e9a48ce9d02a86dd0a1848f00bdbf3c1c92724  linuxdeploy-plugin-qt-x86_64.AppImage" | sha256sum -c -
           chmod +x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage
           mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
-          printf '[Desktop Entry]\nType=Application\nName=NekoBoxPro\nComment=NekoBoxPro proxy client\nExec=nekoboxpro\nIcon=nekoboxpro\nCategories=Network;Qt;\nTerminal=false\n' > AppDir/usr/share/applications/nekobox.desktop
-          cp res/public/nekoboxpro.png AppDir/usr/share/icons/hicolor/256x256/apps/nekoboxpro.png
+          printf '[Desktop Entry]\nType=Application\nName=Sbox-XD\nComment=Sbox-XD proxy client\nExec=sbox-xd\nIcon=sbox-xd\nCategories=Network;Qt;\nTerminal=false\n' > AppDir/usr/share/applications/sboxxd.desktop
+          cp res/public/sbox-xd.png AppDir/usr/share/icons/hicolor/256x256/apps/sbox-xd.png
           # linuxdeploy 只打包 --executable 指定的可执行文件及其共享库依赖（Qt），
           # 不会带上同目录的内核、更新器与 geo 数据。而程序只在
-          # applicationDirPath() 下查找 nekobox_core（main/NekoGui.cpp
-          # FindNekoBoxCoreRealPath，无 PATH 回退），因此必须显式放入 AppDir/usr/bin ——
+          # applicationDirPath() 下查找 sboxxd_core（main/SboxXD.cpp
+          # FindSboxXDCoreRealPath，无 PATH 回退），因此必须显式放入 AppDir/usr/bin ——
           # 否则产出的 AppImage 缺内核，用户「下载直接运行」会无法启动代理。
           mkdir -p AppDir/usr/bin
-          cp deployment/linux64/nekobox_core \
+          cp deployment/linux64/sboxxd_core \
              deployment/linux64/sing-box \
              deployment/linux64/updater \
              deployment/linux64/geoip.dat \
@@ -541,9 +542,9 @@ jobs:
              deployment/linux64/geosite.dat \
              deployment/linux64/geosite.db \
              AppDir/usr/bin/
-          export LDAI_OUTPUT="NekoBoxPro-Linux-x64.AppImage"
+          export LDAI_OUTPUT="Sbox-XD-Linux-x64.AppImage"
           ./linuxdeploy-x86_64.AppImage --appdir AppDir \
-            --executable deployment/linux64/nekoboxpro \
+            --executable deployment/linux64/sbox-xd \
             --plugin qt \
             --output appimage
 
@@ -552,47 +553,47 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/deployment"
           rm -rf linux64/config
-          mv linux64 nekoboxpro
-          tar czf "$GITHUB_WORKSPACE/NekoBoxPro-Linux64.tar.gz" nekoboxpro
+          mv linux64 sbox-xd
+          tar czf "$GITHUB_WORKSPACE/Sbox-XD-Linux64.tar.gz" sbox-xd
 
       - name: Sign release assets (minisign)
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         env:
-          NEKO_MINISIGN_SECRET_KEY: ${{ secrets.NEKO_MINISIGN_SECRET_KEY }}
+          SBOX_MINISIGN_SECRET_KEY: ${{ secrets.SBOX_MINISIGN_SECRET_KEY }}
         run: |
-          if [ -z "$NEKO_MINISIGN_SECRET_KEY" ]; then
-            echo "::error::NEKO_MINISIGN_SECRET_KEY 未配置，禁止发布未签名资产。"
+          if [ -z "$SBOX_MINISIGN_SECRET_KEY" ]; then
+            echo "::error::SBOX_MINISIGN_SECRET_KEY 未配置，禁止发布未签名资产。"
             echo "::error::updater 对无签名更新一律拒绝（fail-closed），发布未签名资产等于发布一个客户端无法自动升级的版本。"
             exit 1
           fi
           # 私钥是更新信任锚，收紧权限并在任何退出路径（含失败中断）清理
           umask 077
-          trap 'rm -f /tmp/nekobox.key' EXIT
-          printf '%s\n' "$NEKO_MINISIGN_SECRET_KEY" > /tmp/nekobox.key
+          trap 'rm -f /tmp/sboxxd.key' EXIT
+          printf '%s\n' "$SBOX_MINISIGN_SECRET_KEY" > /tmp/sboxxd.key
           cd "$GITHUB_WORKSPACE/go/cmd/signasset"
           go build -o "$GITHUB_WORKSPACE/signasset-bin" .
           cd "$GITHUB_WORKSPACE"
-          ./signasset-bin /tmp/nekobox.key NekoBoxPro-Linux-x64.AppImage
-          ./signasset-bin /tmp/nekobox.key NekoBoxPro-Linux64.tar.gz
-          rm -f /tmp/nekobox.key signasset-bin*
+          ./signasset-bin /tmp/sboxxd.key Sbox-XD-Linux-x64.AppImage
+          ./signasset-bin /tmp/sboxxd.key Sbox-XD-Linux64.tar.gz
+          rm -f /tmp/sboxxd.key signasset-bin*
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: nekobox-linux64
+          name: sboxxd-linux64
           path: |
-            NekoBoxPro-Linux-x64.AppImage
-            NekoBoxPro-Linux-x64.AppImage.minisig
-            NekoBoxPro-Linux64.tar.gz
-            NekoBoxPro-Linux64.tar.gz.minisig
+            Sbox-XD-Linux-x64.AppImage
+            Sbox-XD-Linux-x64.AppImage.minisig
+            Sbox-XD-Linux64.tar.gz
+            Sbox-XD-Linux64.tar.gz.minisig
 
       - name: Publish GitHub Release (Linux)
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            NekoBoxPro-Linux-x64.AppImage
-            NekoBoxPro-Linux-x64.AppImage.minisig
-            NekoBoxPro-Linux64.tar.gz
-            NekoBoxPro-Linux64.tar.gz.minisig
+            Sbox-XD-Linux-x64.AppImage
+            Sbox-XD-Linux-x64.AppImage.minisig
+            Sbox-XD-Linux64.tar.gz
+            Sbox-XD-Linux64.tar.gz.minisig

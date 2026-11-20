@@ -17,8 +17,8 @@ import (
 
 // minisign 发布公钥（编译进二进制的信任锚）。
 //
-// 私钥（nekobox.key）已由本项目生成器产出并保管于发布者本机，
-// 其内容需配置在 GitHub Secret：NEKO_MINISIGN_SECRET_KEY。
+// 私钥（sboxxd.key）已由本项目生成器产出并保管于发布者本机，
+// 其内容需配置在 GitHub Secret：SBOX_MINISIGN_SECRET_KEY。
 // 公钥即下方常量（minisign .pub 文件第二行的 base64 串）。
 // 签名发布链路：CI tag 发布时对每个 release 资产生成 <资产>.minisig，
 // updater 在解压前验签；任何一步失败都拒绝更新（fail-closed）。
@@ -32,17 +32,17 @@ func Updater() {
 		if runtime.GOOS == "linux" {
 			os.RemoveAll("./usr")
 		}
-		os.RemoveAll("./nekobox_update")
+		os.RemoveAll("./sboxxd_update")
 	}
 
 	// find update package
 	var updatePackagePath string
 	if len(os.Args) == 2 && Exist(os.Args[1]) {
 		updatePackagePath = os.Args[1]
-	} else if Exist("./nekobox_update.zip") {
-		updatePackagePath = "./nekobox_update.zip"
-	} else if Exist("./nekobox_update.tar.gz") {
-		updatePackagePath = "./nekobox_update.tar.gz"
+	} else if Exist("./sboxxd_update.zip") {
+		updatePackagePath = "./sboxxd_update.zip"
+	} else if Exist("./sboxxd_update.tar.gz") {
+		updatePackagePath = "./sboxxd_update.tar.gz"
 	} else {
 		log.Fatalln("no update")
 	}
@@ -50,7 +50,7 @@ func Updater() {
 
 	// verify minisign signature BEFORE extracting anything
 	if err := verifyUpdateSignature(updatePackagePath); err != nil {
-		MessageBoxPlain("NekoGui Updater", "Update rejected: "+err.Error())
+		MessageBoxPlain("SboxXD Updater", "Update rejected: "+err.Error())
 		log.Fatalln("signature verification failed:", err)
 	}
 	log.Println("update signature verified")
@@ -58,12 +58,12 @@ func Updater() {
 	// extract update package (safe extraction)
 	pre_cleanup()
 	if strings.HasSuffix(updatePackagePath, ".zip") {
-		err := safeExtractZip(updatePackagePath, "./nekobox_update")
+		err := safeExtractZip(updatePackagePath, "./sboxxd_update")
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
 	} else if strings.HasSuffix(updatePackagePath, ".tar.gz") {
-		err := safeExtractTarGz(updatePackagePath, "./nekobox_update")
+		err := safeExtractTarGz(updatePackagePath, "./sboxxd_update")
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
@@ -76,24 +76,27 @@ func Updater() {
 	// update move
 	var updateSrc string
 	if runtime.GOOS == "windows" {
-		updateSrc = "./nekobox_update"
+		updateSrc = "./sboxxd_update"
 	} else {
-		updateSrc = "./nekobox_update/nekoboxpro"
+		updateSrc = "./sboxxd_update/sbox-xd"
 	}
 	err := Mv(updateSrc, "./")
 	if err != nil {
-		MessageBoxPlain("NekoGui Updater", "Update failed. Please close the running instance and run the updater again.\n\n"+err.Error())
+		MessageBoxPlain("SboxXD Updater", "Update failed. Please close the running instance and run the updater again.\n\n"+err.Error())
 		log.Fatalln(err.Error())
 	}
 
-	os.RemoveAll("./nekobox_update")
-	os.RemoveAll("./nekobox_update.zip")
-	os.RemoveAll("./nekobox_update.tar.gz")
+	os.RemoveAll("./sboxxd_update")
+	os.RemoveAll("./sboxxd_update.zip")
+	os.RemoveAll("./sboxxd_update.tar.gz")
 
-	// nekoray -> nekobox
-	os.Remove("./nekoray.exe")
-	os.Remove("./nekoray.png")
-	os.Remove("./nekoray_core.exe")
+	// 清理改名/历史版本遗留的主程序与内核文件（新内核 sboxxd_core 必须在名单之外）
+	for _, f := range []string{
+		"./nekoray.exe", "./nekoray.png", "./nekoray_core.exe",
+		"./NekoBoxPro.exe", "./nekoboxpro", "./nekobox_core.exe",
+	} {
+		os.Remove(f)
+	}
 }
 
 // verifyUpdateSignature 在解压前用内置公钥校验更新包的 minisign 签名。

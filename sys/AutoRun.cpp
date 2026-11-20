@@ -4,7 +4,7 @@
 #include <QDir>
 
 #include "3rdparty/fix_old_qt.h"
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 
 // macOS headers (possibly OBJ-c)
 #if defined(Q_OS_MACOS)
@@ -167,8 +167,8 @@ QString getUserAutostartDir_private() {
 // 开机自启要执行的命令（SetEnabled / IsEnabled 共用，后者才能拿它来比对）。
 static QStringList Linux_GetAutoRunCmdList() {
     QStringList appCmdList;
-    // nekoray: launcher
-    if (qEnvironmentVariable("NKR_FROM_LAUNCHER") == "1") {
+    // Sbox-XD: launcher（AppImage / launcher 启动时自启要复用同一入口）
+    if (qEnvironmentVariable("SBX_FROM_LAUNCHER") == "1") {
         appCmdList << QApplication::applicationDirPath() + "/launcher"
                    << "--";
     } else if (QProcessEnvironment::systemEnvironment().contains("APPIMAGE")) {
@@ -177,7 +177,7 @@ static QStringList Linux_GetAutoRunCmdList() {
         appCmdList << QApplication::applicationFilePath();
     }
     appCmdList << "-tray";
-    if (NekoGui::dataStore->flag_use_appdata) appCmdList << "-appdata";
+    if (SboxXD::dataStore->flag_use_appdata) appCmdList << "-appdata";
     return appCmdList;
 }
 

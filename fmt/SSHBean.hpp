@@ -2,7 +2,7 @@
 
 #include "fmt/AbstractBean.hpp"
 
-namespace NekoGui_fmt {
+namespace SboxXD_fmt {
     class SSHBean : public AbstractBean {
     public:
         QString username = "";
@@ -21,4 +21,4 @@ namespace NekoGui_fmt {
 
         QString ToShareLink() override;
     };
-} // namespace NekoGui_fmt
+} // namespace SboxXD_fmt

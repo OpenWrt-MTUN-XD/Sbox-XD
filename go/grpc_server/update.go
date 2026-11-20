@@ -21,11 +21,11 @@ var update_download_url string
 // fetchLatestTagFromAtom 通过 GitHub releases.atom（RSS）获取最新发布 tag，
 // 用于 API 限流（403）时的备用版本确认。
 func fetchLatestTagFromAtom(client *http.Client) string {
-	req, err := http.NewRequest("GET", "https://github.com/NekoBoxHQ/NekoBoxPro/releases.atom", nil)
+	req, err := http.NewRequest("GET", "https://github.com/OpenWrt-MTUN-XD/Sbox-XD/releases.atom", nil)
 	if err != nil {
 		return ""
 	}
-	req.Header.Set("User-Agent", "NekoBoxPro")
+	req.Header.Set("User-Agent", "Sbox-XD")
 	resp, err := client.Do(req)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return ""
@@ -58,8 +58,8 @@ func (s *BaseServer) Update(ctx context.Context, in *gen.UpdateReq) (*gen.Update
 		ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 		defer cancel()
 
-		req, _ := http.NewRequestWithContext(ctx, "GET", "https://api.github.com/repos/NekoBoxHQ/NekoBoxPro/releases", nil)
-		req.Header.Set("User-Agent", "NekoBoxPro/"+strings.TrimPrefix(neko_common.Version_neko, "nekoray-"))
+		req, _ := http.NewRequestWithContext(ctx, "GET", "https://api.github.com/repos/OpenWrt-MTUN-XD/Sbox-XD/releases", nil)
+		req.Header.Set("User-Agent", "Sbox-XD/"+strings.TrimPrefix(neko_common.Version_neko, "sbox-xd-"))
 		req.Header.Set("Accept", "application/vnd.github+json")
 		resp, err := client.Do(req)
 		if err != nil {
@@ -70,7 +70,7 @@ func (s *BaseServer) Update(ctx context.Context, in *gen.UpdateReq) (*gen.Update
 
 		if resp.StatusCode != http.StatusOK {
 			// API 限流/异常时用 releases.atom 备用确认最新版本（不受 API 限流影响）
-			nowVer := strings.TrimPrefix(neko_common.Version_neko, "nekoray-")
+			nowVer := strings.TrimPrefix(neko_common.Version_neko, "sbox-xd-")
 			latestTag := fetchLatestTagFromAtom(client)
 			if latestTag != "" {
 				if strings.TrimPrefix(latestTag, "v") == nowVer {
@@ -79,17 +79,17 @@ func (s *BaseServer) Update(ctx context.Context, in *gen.UpdateReq) (*gen.Update
 				// 有新版本：直接构造发布页下载 URL（不经 api.github.com，绕开限流）
 				var assetName string
 				if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
-					assetName = "NekoBoxPro-Windows64.zip"
+					assetName = "Sbox-XD-Windows64.zip"
 				} else if runtime.GOOS == "linux" && runtime.GOARCH == "amd64" {
-					assetName = "NekoBoxPro-Linux64.tar.gz"
+					assetName = "Sbox-XD-Linux64.tar.gz"
 				} else if runtime.GOOS == "darwin" {
-					assetName = "NekoBoxPro-macOS-" + runtime.GOARCH + ".zip"
+					assetName = "Sbox-XD-macOS-" + runtime.GOARCH + ".zip"
 				}
 				if assetName != "" {
-					update_download_url = "https://github.com/NekoBoxHQ/NekoBoxPro/releases/download/" + latestTag + "/" + assetName
+					update_download_url = "https://github.com/OpenWrt-MTUN-XD/Sbox-XD/releases/download/" + latestTag + "/" + assetName
 					ret.AssetsName = assetName
 					ret.DownloadUrl = update_download_url
-					ret.ReleaseUrl = "https://github.com/NekoBoxHQ/NekoBoxPro/releases/tag/" + latestTag
+					ret.ReleaseUrl = "https://github.com/OpenWrt-MTUN-XD/Sbox-XD/releases/tag/" + latestTag
 					return ret, nil // update
 				}
 				ret.Error = fmt.Sprintf("发现新版本 %s，但当前平台不受支持", latestTag)
@@ -115,7 +115,7 @@ func (s *BaseServer) Update(ctx context.Context, in *gen.UpdateReq) (*gen.Update
 			return ret, nil
 		}
 
-		nowVer := strings.TrimPrefix(neko_common.Version_neko, "nekoray-")
+		nowVer := strings.TrimPrefix(neko_common.Version_neko, "sbox-xd-")
 
 		var search string
 		if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
@@ -178,9 +178,9 @@ func (s *BaseServer) Update(ctx context.Context, in *gen.UpdateReq) (*gen.Update
 		}
 
 		// 按实际资产格式命名更新包，供 updater 识别（zip / tar.gz）
-		updateName := "nekobox_update.zip"
+		updateName := "sboxxd_update.zip"
 		if strings.HasSuffix(update_download_url, ".tar.gz") {
-			updateName = "nekobox_update.tar.gz"
+			updateName = "sboxxd_update.tar.gz"
 		}
 		updatePath := filepath.Join(filepath.Dir(exePath), updateName)
 

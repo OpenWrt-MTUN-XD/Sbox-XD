@@ -1,5 +1,5 @@
 #include "ExternalProcess.hpp"
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 
 #include <QTimer>
 #include <QDir>
@@ -12,7 +12,7 @@
 #include "sys/windows/guihelper.h"
 #endif
 
-namespace NekoGui_sys {
+namespace SboxXD_sys {
 
     ExternalProcess::ExternalProcess() : QProcess() {
         // qDebug() << "[Debug] ExternalProcess()" << this << running_ext;
@@ -30,7 +30,7 @@ namespace NekoGui_sys {
         if (managed) {
             connect(this, &QProcess::readyReadStandardOutput, this, [&]() {
                 auto log = readAllStandardOutput();
-                if (logCounter.fetchAndAddRelaxed(log.count("\n")) > NekoGui::dataStore->max_log_line) return;
+                if (logCounter.fetchAndAddRelaxed(log.count("\n")) > SboxXD::dataStore->max_log_line) return;
                 MW_show_log_ext_vt100(log);
             });
             connect(this, &QProcess::readyReadStandardError, this, [&]() {
@@ -106,10 +106,10 @@ namespace NekoGui_sys {
 
         connect(this, &QProcess::readyReadStandardOutput, this, [&]() {
             auto log = readAllStandardOutput();
-            if (!NekoGui::dataStore->core_running) {
+            if (!SboxXD::dataStore->core_running) {
                 if (log.contains("grpc server listening")) {
                     // The core really started
-                    NekoGui::dataStore->core_running = true;
+                    SboxXD::dataStore->core_running = true;
                     if (start_profile_when_core_is_up >= 0) {
                         MW_dialog_message("ExternalProcess", "CoreStarted," + Int2String(start_profile_when_core_is_up));
                         start_profile_when_core_is_up = -1;
@@ -119,7 +119,7 @@ namespace NekoGui_sys {
                     QProcess::kill();
                 }
             }
-            if (logCounter.fetchAndAddRelaxed(log.count("\n")) > NekoGui::dataStore->max_log_line) return;
+            if (logCounter.fetchAndAddRelaxed(log.count("\n")) > SboxXD::dataStore->max_log_line) return;
             MW_show_log_ext_vt100(log); // strip ANSI color codes for clean log view
         });
         connect(this, &QProcess::readyReadStandardError, this, [&]() {
@@ -151,10 +151,10 @@ namespace NekoGui_sys {
         });
         connect(this, &QProcess::stateChanged, this, [&](QProcess::ProcessState state) {
             if (state == QProcess::NotRunning) {
-                NekoGui::dataStore->core_running = false;
+                SboxXD::dataStore->core_running = false;
             }
 
-            if (!NekoGui::dataStore->prepare_exit && state == QProcess::NotRunning) {
+            if (!SboxXD::dataStore->prepare_exit && state == QProcess::NotRunning) {
                 if (failed_to_start) return; // no retry
                 if (restarting) return;
 
@@ -172,7 +172,7 @@ namespace NekoGui_sys {
                 }
 
                 // Restart
-                start_profile_when_core_is_up = NekoGui::dataStore->started_id;
+                start_profile_when_core_is_up = SboxXD::dataStore->started_id;
                 MW_show_log("[Error] " + QObject::tr("Core exited, restarting."));
                 setTimeout([=] { Restart(); }, this, 1000);
             }
@@ -183,7 +183,7 @@ namespace NekoGui_sys {
         show_stderr = false;
         // cwd: same as GUI, at ./config
         ExternalProcess::Start();
-        write((NekoGui::dataStore->core_token + "\n").toUtf8());
+        write((SboxXD::dataStore->core_token + "\n").toUtf8());
     }
 
     void CoreProcess::Restart() {
@@ -195,4 +195,4 @@ namespace NekoGui_sys {
         restarting = false;
     }
 
-} // namespace NekoGui_sys
+} // namespace SboxXD_sys

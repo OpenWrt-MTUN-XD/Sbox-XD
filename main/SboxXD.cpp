@@ -1,4 +1,4 @@
-#include "NekoGui.hpp"
+#include "SboxXD.hpp"
 #include "fmt/Preset.hpp"
 
 #include <QFile>
@@ -18,7 +18,7 @@
 #include <unistd.h>
 #endif
 
-namespace NekoGui_ConfigItem {
+namespace SboxXD_ConfigItem {
 
     // 添加关联
     void JsonStore::_add(configItem *item) {
@@ -237,9 +237,9 @@ namespace NekoGui_ConfigItem {
         return ok;
     }
 
-} // namespace NekoGui_ConfigItem
+} // namespace SboxXD_ConfigItem
 
-namespace NekoGui {
+namespace SboxXD {
 
     DataStore *dataStore = new DataStore();
 
@@ -320,9 +320,9 @@ namespace NekoGui {
             isDefault = true;
         }
         if (isDefault) {
-            QString version = SubStrBefore(NKR_VERSION, "-");
+            QString version = SubStrBefore(SBX_VERSION, "-");
             if (!version.contains(".")) version = "2.0";
-            return "NekoBoxPro/PC/" + version + " (Prefer ClashMeta Format)";
+            return "Sbox-XD/PC/" + version + " (Prefer ClashMeta Format)";
         }
         return user_agent;
     }
@@ -385,13 +385,13 @@ namespace NekoGui {
     }
 
     bool Routing::SetToActive(const QString &name) {
-        NekoGui::dataStore->routing = std::make_unique<Routing>();
-        NekoGui::dataStore->routing->load_control_must = true;
-        NekoGui::dataStore->routing->fn = ROUTES_PREFIX + name;
-        auto ok = NekoGui::dataStore->routing->Load();
+        SboxXD::dataStore->routing = std::make_unique<Routing>();
+        SboxXD::dataStore->routing->load_control_must = true;
+        SboxXD::dataStore->routing->fn = ROUTES_PREFIX + name;
+        auto ok = SboxXD::dataStore->routing->Load();
         if (ok) {
-            NekoGui::dataStore->active_routing = name;
-            NekoGui::dataStore->Save();
+            SboxXD::dataStore->active_routing = name;
+            SboxXD::dataStore->Save();
         }
         return ok;
     }
@@ -439,8 +439,8 @@ namespace NekoGui {
         search << "/usr/share/sing-geoip";
         search << "/usr/share/sing-geosite";
         search << "/usr/share/sing-box";
-        search << "/usr/lib/nekobox";
-        search << "/usr/share/nekobox";
+        search << "/usr/lib/sboxxd";
+        search << "/usr/share/sboxxd";
         for (const auto &dir: search) {
             if (dir.isEmpty()) continue;
             QFileInfo asset(dir + "/" + name);
@@ -451,8 +451,8 @@ namespace NekoGui {
         return {};
     }
 
-    QString FindNekoBoxCoreRealPath() {
-        auto fn = QApplication::applicationDirPath() + "/nekobox_core";
+    QString FindSboxXDCoreRealPath() {
+        auto fn = QApplication::applicationDirPath() + "/sboxxd_core";
         auto fi = QFileInfo(fn);
         if (fi.isSymLink()) return fi.symLinkTarget();
         return fn;
@@ -469,7 +469,7 @@ namespace NekoGui {
         admin = Windows_IsInAdmin();
 #else
 #ifdef Q_OS_LINUX
-        admin |= Linux_GetCapString(FindNekoBoxCoreRealPath()).contains("cap_net_admin");
+        admin |= Linux_GetCapString(FindSboxXDCoreRealPath()).contains("cap_net_admin");
 #endif
         admin |= geteuid() == 0;
 #endif
@@ -478,4 +478,4 @@ namespace NekoGui {
         return admin;
     };
 
-} // namespace NekoGui
+} // namespace SboxXD

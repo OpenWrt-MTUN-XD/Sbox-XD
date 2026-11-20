@@ -2,7 +2,7 @@
 
 #include "fmt/AbstractBean.hpp"
 
-namespace NekoGui_fmt {
+namespace SboxXD_fmt {
     class AnyTLSBean : public AbstractBean {
     public:
         QString password = "";
@@ -23,4 +23,4 @@ namespace NekoGui_fmt {
 
         QString ToShareLink() override;
     };
-} // namespace NekoGui_fmt
+} // namespace SboxXD_fmt

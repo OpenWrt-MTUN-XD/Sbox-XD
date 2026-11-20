@@ -61,7 +61,7 @@ LONG __stdcall CreateCrashHandler(EXCEPTION_POINTERS *pException) {
                                      .arg(errAddr)
                                      .arg(errFlag)
                                      .arg(errPara)
-                                     .arg(NKR_VERSION)
+                                     .arg(SBX_VERSION)
                                      .arg(dumpText),
                                  QMessageBox::Ok);
         }

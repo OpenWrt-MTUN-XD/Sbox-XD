@@ -8,7 +8,7 @@
 
 //
 
-inline QString software_name = "NekoBoxPro";
+inline QString software_name = "Sbox-XD";
 inline QString software_core_name = "sing-box";
 
 // Main Functions

@@ -1,6 +1,6 @@
 // DO NOT INCLUDE THIS
 
-namespace NekoGui {
+namespace SboxXD {
 
     class Routing : public JsonStore {
     public:
@@ -179,4 +179,4 @@ namespace NekoGui {
 
     extern DataStore *dataStore;
 
-} // namespace NekoGui
+} // namespace SboxXD

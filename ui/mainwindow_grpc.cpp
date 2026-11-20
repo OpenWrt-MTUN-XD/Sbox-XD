@@ -23,11 +23,11 @@
 
 // ext core
 
-std::list<std::shared_ptr<NekoGui_sys::ExternalProcess>> CreateExtCFromExtR(const std::list<std::shared_ptr<NekoGui_fmt::ExternalBuildResult>> &extRs, bool start) {
+std::list<std::shared_ptr<SboxXD_sys::ExternalProcess>> CreateExtCFromExtR(const std::list<std::shared_ptr<SboxXD_fmt::ExternalBuildResult>> &extRs, bool start) {
     // plz run and start in same thread
-    std::list<std::shared_ptr<NekoGui_sys::ExternalProcess>> l;
+    std::list<std::shared_ptr<SboxXD_sys::ExternalProcess>> l;
     for (const auto &extR: extRs) {
-        std::shared_ptr<NekoGui_sys::ExternalProcess> extC(new NekoGui_sys::ExternalProcess());
+        std::shared_ptr<SboxXD_sys::ExternalProcess> extC(new SboxXD_sys::ExternalProcess());
         extC->tag = extR->tag;
         extC->program = extR->program;
         extC->arguments = extR->arguments;
@@ -41,21 +41,21 @@ std::list<std::shared_ptr<NekoGui_sys::ExternalProcess>> CreateExtCFromExtR(cons
 
 // grpc
 
-#ifndef NKR_NO_GRPC
-using namespace NekoGui_rpc;
+#ifndef SBX_NO_GRPC
+using namespace SboxXD_rpc;
 #endif
 
 void MainWindow::setup_grpc() {
-#ifndef NKR_NO_GRPC
+#ifndef SBX_NO_GRPC
     // Setup Connection
     defaultClient = new Client(
         [=](const QString &errStr) {
             MW_show_log("[Error] gRPC: " + errStr);
         },
-        "127.0.0.1:" + Int2String(NekoGui::dataStore->core_port), NekoGui::dataStore->core_token);
+        "127.0.0.1:" + Int2String(SboxXD::dataStore->core_port), SboxXD::dataStore->core_token);
 
     // Looper
-    runOnNewThread([=] { NekoGui_traffic::trafficLooper->Loop(); });
+    runOnNewThread([=] { SboxXD_traffic::trafficLooper->Loop(); });
 #endif
 }
 
@@ -71,9 +71,9 @@ void MainWindow::speedtest_current_group(int mode, bool test_group) {
     }
 
     auto profiles = get_selected_or_group();
-    if (test_group) profiles = NekoGui::profileManager->CurrentGroup()->ProfilesWithOrder();
+    if (test_group) profiles = SboxXD::profileManager->CurrentGroup()->ProfilesWithOrder();
     if (profiles.isEmpty()) return;
-    auto group = NekoGui::profileManager->CurrentGroup();
+    auto group = SboxXD::profileManager->CurrentGroup();
     if (group->archive) return;
 
     // menu_stop_testing
@@ -86,7 +86,7 @@ void MainWindow::speedtest_current_group(int mode, bool test_group) {
         return;
     }
 
-#ifndef NKR_NO_GRPC
+#ifndef SBX_NO_GRPC
     QStringList full_test_flags;
     if (mode == libcore::FullTest) {
         auto w = new QDialog(this);
@@ -127,7 +127,7 @@ void MainWindow::speedtest_current_group(int mode, bool test_group) {
     runOnNewThread([this, profiles, mode, full_test_flags]() {
         QMutex lock_write;
         QSemaphore done; // 每个 worker 彻底退出时 release 一次；控制线程 acquire(threadN) 一次等齐
-        int threadN = NekoGui::dataStore->test_concurrent;
+        int threadN = SboxXD::dataStore->test_concurrent;
         auto profiles_test = profiles; // copy
 
         // Threads
@@ -157,10 +157,10 @@ void MainWindow::speedtest_current_group(int mode, bool test_group) {
                     libcore::TestReq req;
                     req.set_mode((libcore::TestMode) mode);
                     req.set_timeout(10 * 1000);
-                    req.set_url(NekoGui::dataStore->test_latency_url.toStdString());
+                    req.set_url(SboxXD::dataStore->test_latency_url.toStdString());
 
                     //
-                    std::list<std::shared_ptr<NekoGui_sys::ExternalProcess>> extCs;
+                    std::list<std::shared_ptr<SboxXD_sys::ExternalProcess>> extCs;
                     QSemaphore extSem;
 
                     if (mode == libcore::TestMode::UrlTest || mode == libcore::FullTest) {
@@ -196,8 +196,8 @@ void MainWindow::speedtest_current_group(int mode, bool test_group) {
                         req.set_full_speed(full_test_flags.contains("3"));
                         req.set_full_in_out(full_test_flags.contains("4"));
 
-                        req.set_full_speed_url(NekoGui::dataStore->test_download_url.toStdString());
-                        req.set_full_speed_timeout(NekoGui::dataStore->test_download_timeout);
+                        req.set_full_speed_url(SboxXD::dataStore->test_download_url.toStdString());
+                        req.set_full_speed_timeout(SboxXD::dataStore->test_download_timeout);
                     } else if (mode == libcore::TcpPing) {
                         req.set_address(profile->bean->DisplayAddress().toStdString());
                     }
@@ -252,7 +252,7 @@ void MainWindow::speedtest_current_group(int mode, bool test_group) {
 }
 
 void MainWindow::speedtest_current() {
-#ifndef NKR_NO_GRPC
+#ifndef SBX_NO_GRPC
     last_test_time = QTime::currentTime();
     ui->label_running->setText(tr("Testing"));
 
@@ -260,7 +260,7 @@ void MainWindow::speedtest_current() {
         libcore::TestReq req;
         req.set_mode(libcore::UrlTest);
         req.set_timeout(10 * 1000);
-        req.set_url(NekoGui::dataStore->test_latency_url.toStdString());
+        req.set_url(SboxXD::dataStore->test_latency_url.toStdString());
 
         bool rpcOK;
         auto result = defaultClient->Test(&rpcOK, req);
@@ -284,20 +284,20 @@ void MainWindow::speedtest_current() {
 }
 
 void MainWindow::stop_core_daemon() {
-#ifndef NKR_NO_GRPC
-    NekoGui_rpc::defaultClient->Exit();
+#ifndef SBX_NO_GRPC
+    SboxXD_rpc::defaultClient->Exit();
 #endif
 }
 
 void MainWindow::ping_current() {
-    auto group = NekoGui::profileManager->CurrentGroup();
+    auto group = SboxXD::profileManager->CurrentGroup();
     if (group == nullptr) return;
     auto profiles = group->Profiles();
     if (profiles.isEmpty()) return;
 
     // 遍历全组 ping，受限并发（test_concurrent），每个节点结果独立写回
     struct PingState {
-        QList<std::shared_ptr<NekoGui::ProxyEntity>> profiles;
+        QList<std::shared_ptr<SboxXD::ProxyEntity>> profiles;
         int started = 0;
         int finished = 0;
         int maxConcurrent = 8;
@@ -306,7 +306,7 @@ void MainWindow::ping_current() {
 
     auto st = std::make_shared<PingState>();
     st->profiles = profiles;
-    st->maxConcurrent = NekoGui::dataStore->test_concurrent > 0 ? NekoGui::dataStore->test_concurrent : 8;
+    st->maxConcurrent = SboxXD::dataStore->test_concurrent > 0 ? SboxXD::dataStore->test_concurrent : 8;
 
     // ⚠️ kick 不能再按值捕获 st（= shared_ptr<PingState>）：kick 存在 st->kick 里、
     // 又持有 st → 自引用环，PingState 永远不释放（每次 Ping 漏一个）。
@@ -385,11 +385,11 @@ void MainWindow::ping_current() {
     st->kick();
 }
 
-void MainWindow::neko_start(int _id) {
-    if (NekoGui::dataStore->prepare_exit) return;
+void MainWindow::sbx_start(int _id) {
+    if (SboxXD::dataStore->prepare_exit) return;
 
     auto ents = get_now_selected_list();
-    auto ent = (_id < 0 && !ents.isEmpty()) ? ents.first() : NekoGui::profileManager->GetProfile(_id);
+    auto ent = (_id < 0 && !ents.isEmpty()) ? ents.first() : SboxXD::profileManager->GetProfile(_id);
     if (ent == nullptr) return;
 
     if (select_mode) {
@@ -399,7 +399,7 @@ void MainWindow::neko_start(int _id) {
         return;
     }
 
-    auto group = NekoGui::profileManager->GetGroup(ent->gid);
+    auto group = SboxXD::profileManager->GetGroup(ent->gid);
     if (group == nullptr || group->archive) return;
 
     auto result = BuildConfig(ent, false, false);
@@ -408,12 +408,12 @@ void MainWindow::neko_start(int _id) {
         return;
     }
 
-    auto neko_start_stage2 = [=] {
-#ifndef NKR_NO_GRPC
+    auto sbx_start_stage2 = [=] {
+#ifndef SBX_NO_GRPC
         libcore::LoadConfigReq req;
         req.set_core_config(QJsonObject2QString(result->coreConfig, false).toStdString());
-        req.set_enable_nekoray_connections(NekoGui::dataStore->connection_statistics);
-        if (NekoGui::dataStore->traffic_loop_interval > 0) {
+        req.set_enable_nekoray_connections(SboxXD::dataStore->connection_statistics);
+        if (SboxXD::dataStore->traffic_loop_interval > 0) {
             req.add_stats_outbounds("proxy");
             req.add_stats_outbounds("bypass");
         }
@@ -427,20 +427,20 @@ void MainWindow::neko_start(int _id) {
             return false;
         }
         //
-        NekoGui_traffic::trafficLooper->proxy = result->outboundStat.get();
-        NekoGui_traffic::trafficLooper->items = result->outboundStats;
-        NekoGui::dataStore->ignoreConnTag = result->ignoreConnTag;
-        NekoGui_traffic::trafficLooper->loop_enabled = true;
+        SboxXD_traffic::trafficLooper->proxy = result->outboundStat.get();
+        SboxXD_traffic::trafficLooper->items = result->outboundStats;
+        SboxXD::dataStore->ignoreConnTag = result->ignoreConnTag;
+        SboxXD_traffic::trafficLooper->loop_enabled = true;
 #endif
 
         runOnUiThread(
             [=] {
                 auto extCs = CreateExtCFromExtR(result->extRs, true);
-                NekoGui_sys::running_ext.splice(NekoGui_sys::running_ext.end(), extCs);
+                SboxXD_sys::running_ext.splice(SboxXD_sys::running_ext.end(), extCs);
             },
             DS_cores);
 
-        NekoGui::dataStore->UpdateStartedId(ent->id);
+        SboxXD::dataStore->UpdateStartedId(ent->id);
         running = ent;
 
         runOnUiThread([=] {
@@ -463,7 +463,7 @@ void MainWindow::neko_start(int _id) {
     mu_stopping.unlock();
 
     // check core state
-    if (!NekoGui::dataStore->core_running) {
+    if (!SboxXD::dataStore->core_running) {
         runOnUiThread(
             [=] {
                 MW_show_log("Try to start the config, but the core has not listened to the grpc port, so restart it...");
@@ -472,7 +472,7 @@ void MainWindow::neko_start(int _id) {
             },
             DS_cores);
         mu_starting.unlock();
-        return; // let CoreProcess call neko_start when core is up
+        return; // let CoreProcess call sbx_start when core is up
     }
 
     // timeout message
@@ -483,13 +483,13 @@ void MainWindow::neko_start(int _id) {
 
     runOnNewThread([=] {
         // stop current running
-        if (NekoGui::dataStore->started_id >= 0) {
-            runOnUiThread([=] { neko_stop(false, true); });
+        if (SboxXD::dataStore->started_id >= 0) {
+            runOnUiThread([=] { sbx_stop(false, true); });
             sem_stopped.acquire();
         }
         // do start
         MW_show_log(">>>>>>>> " + tr("Starting profile %1").arg(ent->bean->DisplayTypeAndName()));
-        if (!neko_start_stage2()) {
+        if (!sbx_start_stage2()) {
             MW_show_log("<<<<<<<< " + tr("Failed to start profile %1").arg(ent->bean->DisplayTypeAndName()));
         }
         mu_starting.unlock();
@@ -500,7 +500,7 @@ void MainWindow::neko_start(int _id) {
             restartMsgbox->deleteLater();
 #ifdef Q_OS_LINUX
             // Check systemd-resolved
-            if (NekoGui::dataStore->spmode_vpn && NekoGui::dataStore->routing->direct_dns.startsWith("local") && ReadFileText("/etc/resolv.conf").contains("systemd-resolved")) {
+            if (SboxXD::dataStore->spmode_vpn && SboxXD::dataStore->routing->direct_dns.startsWith("local") && ReadFileText("/etc/resolv.conf").contains("systemd-resolved")) {
                 MW_show_log("[Warning] The default Direct DNS may not works with systemd-resolved, you may consider change your DNS settings.");
             }
 #endif
@@ -508,37 +508,37 @@ void MainWindow::neko_start(int _id) {
     });
 }
 
-void MainWindow::neko_stop(bool crash, bool sem) {
-    auto id = NekoGui::dataStore->started_id;
+void MainWindow::sbx_stop(bool crash, bool sem) {
+    auto id = SboxXD::dataStore->started_id;
     if (id < 0) {
         if (sem) sem_stopped.release();
         return;
     }
 
-    auto neko_stop_stage2 = [=] {
+    auto sbx_stop_stage2 = [=] {
         runOnUiThread(
             [=] {
-                while (!NekoGui_sys::running_ext.empty()) {
-                    auto extC = NekoGui_sys::running_ext.front();
+                while (!SboxXD_sys::running_ext.empty()) {
+                    auto extC = SboxXD_sys::running_ext.front();
                     extC->Kill();
-                    NekoGui_sys::running_ext.pop_front();
+                    SboxXD_sys::running_ext.pop_front();
                 }
             },
             DS_cores);
 
-#ifndef NKR_NO_GRPC
-        NekoGui_traffic::trafficLooper->loop_enabled = false;
-        NekoGui_traffic::trafficLooper->loop_mutex.lock();
-        if (NekoGui::dataStore->traffic_loop_interval != 0) {
-            NekoGui_traffic::trafficLooper->UpdateAll();
-            for (const auto &item: NekoGui_traffic::trafficLooper->items) {
+#ifndef SBX_NO_GRPC
+        SboxXD_traffic::trafficLooper->loop_enabled = false;
+        SboxXD_traffic::trafficLooper->loop_mutex.lock();
+        if (SboxXD::dataStore->traffic_loop_interval != 0) {
+            SboxXD_traffic::trafficLooper->UpdateAll();
+            for (const auto &item: SboxXD_traffic::trafficLooper->items) {
                 // 节点可能已被删除（items 里还留着旧 id）→ GetProfile 可能返回空，别直接解引用
-                auto p = NekoGui::profileManager->GetProfile(item->id);
+                auto p = SboxXD::profileManager->GetProfile(item->id);
                 if (p != nullptr) p->Save();
                 runOnUiThread([=] { refresh_proxy_list(item->id); });
             }
         }
-        NekoGui_traffic::trafficLooper->loop_mutex.unlock();
+        SboxXD_traffic::trafficLooper->loop_mutex.unlock();
 
         if (!crash) {
             bool rpcOK;
@@ -552,8 +552,8 @@ void MainWindow::neko_stop(bool crash, bool sem) {
         }
 #endif
 
-        NekoGui::dataStore->UpdateStartedId(-1919);
-        NekoGui::dataStore->need_keep_vpn_off = false;
+        SboxXD::dataStore->UpdateStartedId(-1919);
+        SboxXD::dataStore->need_keep_vpn_off = false;
         running = nullptr;
 
         runOnUiThread([=] {
@@ -579,7 +579,7 @@ void MainWindow::neko_stop(bool crash, bool sem) {
         // do stop
         // running 可能已被 stage2 置空（或从没设过），解引用前必须判空
         MW_show_log(">>>>>>>> " + tr("Stopping profile %1").arg(running != nullptr ? running->bean->DisplayTypeAndName() : QStringLiteral("?")));
-        if (!neko_stop_stage2()) {
+        if (!sbx_stop_stage2()) {
             MW_show_log("<<<<<<<< " + tr("Failed to stop, please restart the program."));
         }
         mu_stopping.unlock();
@@ -595,12 +595,12 @@ void MainWindow::neko_stop(bool crash, bool sem) {
 
 void MainWindow::CheckUpdate() {
     // on new thread...
-#ifndef NKR_NO_GRPC
+#ifndef SBX_NO_GRPC
     bool ok;
     libcore::UpdateReq request;
     request.set_action(libcore::UpdateAction::Check);
-    request.set_check_pre_release(NekoGui::dataStore->check_include_pre);
-    auto response = NekoGui_rpc::defaultClient->Update(&ok, request);
+    request.set_check_pre_release(SboxXD::dataStore->check_include_pre);
+    auto response = SboxXD_rpc::defaultClient->Update(&ok, request);
     if (!ok) return;
 
     auto err = response.error();
@@ -631,7 +631,7 @@ void MainWindow::CheckUpdate() {
     }
 
     runOnUiThread([=] {
-        auto allow_updater = !NekoGui::dataStore->flag_use_appdata;
+        auto allow_updater = !SboxXD::dataStore->flag_use_appdata;
         auto note_pre_release = response.is_pre_release() ? " (Pre-release)" : "";
         QMessageBox box(QMessageBox::Question, QObject::tr("Update") + note_pre_release,
                         QObject::tr("Update found: %1\nRelease note:\n%2").arg(response.assets_name().c_str(), response.release_note().c_str()));
@@ -650,7 +650,7 @@ void MainWindow::CheckUpdate() {
                 bool ok2;
                 libcore::UpdateReq request2;
                 request2.set_action(libcore::UpdateAction::Download);
-                auto response2 = NekoGui_rpc::defaultClient->Update(&ok2, request2);
+                auto response2 = SboxXD_rpc::defaultClient->Update(&ok2, request2);
                 runOnUiThread([=] {
                     if (response2.error().empty()) {
                         auto q = QMessageBox::question(nullptr, QObject::tr("Update"),

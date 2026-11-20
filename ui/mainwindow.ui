@@ -18,9 +18,9 @@
   </property>
   <property name="windowTitle">
    <!-- 仅作为 Designer 占位符；运行时会由 MainWindow::refresh_status 用
-        software_name + NKR_VERSION 调 setWindowTitle() 覆盖。此处不写版本号，
+        software_name + SBX_VERSION 调 setWindowTitle() 覆盖。此处不写版本号，
         避免每次发版都要手工同步（漏改就会显示过期版本）。 -->
-   <string notr="true">NekoBoxPro</string>
+   <string notr="true">Sbox-XD</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0">
@@ -562,7 +562,7 @@
      <addaction name="menu_export_config"/>
      <addaction name="separator"/>
      <addaction name="menu_copy_links"/>
-     <addaction name="menu_copy_links_nkr"/>
+     <addaction name="menu_copy_links_sboxxd"/>
     </widget>
     <widget class="QMenu" name="menuCurrent_Group">
      <property name="title">
@@ -843,9 +843,9 @@
     <string notr="true">Ctrl+A</string>
    </property>
   </action>
-  <action name="menu_copy_links_nkr">
+  <action name="menu_copy_links_sboxxd">
    <property name="text">
-    <string>Copy links of selected (Neko Links)</string>
+    <string>Copy links of selected (Sbox-XD Links)</string>
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+N</string>

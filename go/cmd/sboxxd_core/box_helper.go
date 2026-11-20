@@ -12,7 +12,7 @@ import (
 	"github.com/sagernet/sing/common/json"
 )
 
-// platformLogWriter 将 sing-box 内部日志转发到 neko 日志 writer。
+// platformLogWriter 将 sing-box 内部日志转发到本项目的日志 writer。
 // 适配官方 sing-box >= 1.11 的 log.PlatformWriter 接口（旧 boxmain.SetLogWritter 已移除）。
 type platformLogWriter struct {
 	w io.Writer
@@ -49,7 +49,7 @@ func createBoxInternal(configContent []byte, withLog bool) (*box.Box, context.Ca
 		cancel()
 		return nil, nil, err
 	}
-	// 日志不输出 ANSI 颜色码，GUI 日志面板与 neko.log 保持干净
+	// 日志不输出 ANSI 颜色码，GUI 日志面板与 sboxxd.log 保持干净
 	options.Log.DisableColor = true
 	boxOptions := box.Options{
 		Context: ctx,

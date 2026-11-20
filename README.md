@@ -1,4 +1,4 @@
-# NekoBoxPro
+# Sbox-XD
 
 > 基于 [MatsuriDayo/NekoRay](https://github.com/MatsuriDayo/NekoRay)（GPLv3，上游衍生自 Qv2ray）的修改版，与原版的差异见 [NOTICE](./NOTICE)。仅使用 sing-box 单一内核。
 
@@ -9,11 +9,11 @@ A modern sing-box GUI client. 单内核 · 稳定优先 · 最小复杂度
 
 ## 界面展示
 
-![NekoBoxPro](docs/screenshot.png)
+![Sbox-XD](docs/screenshot.png)
 
 ## 简介
 
-NekoBoxPro 是一款基于 NekoRay 修改的现代 sing-box GUI 客户端，仅使用 sing-box 单一内核，稳定优先、面向长期维护。
+Sbox-XD 是一款基于 NekoRay 修改的现代 sing-box GUI 客户端，仅使用 sing-box 单一内核，稳定优先、面向长期维护。
 
 ## 特性
 
@@ -37,15 +37,15 @@ NekoBoxPro 是一款基于 NekoRay 修改的现代 sing-box GUI 客户端，仅�
 
 ### Windows
 
-1. 从 [Releases](https://github.com/NekoBoxHQ/NekoBoxPro/releases/latest) 下载 `NekoBoxPro-Windows64.zip`
-2. 解压后运行 `NekoBoxPro.exe`
+1. 从 [Releases](https://github.com/OpenWrt-MTUN-XD/Sbox-XD/releases/latest) 下载 `Sbox-XD-Windows64.zip`
+2. 解压后运行 `Sbox-XD.exe`
 
 若提示缺少运行库，请安装 [微软 C++ 运行库](https://aka.ms/vs/17/release/vc_redist.x64.exe)。
 
 ### Linux
 
-- 下载 `NekoBoxPro-Linux-x64.AppImage` 直接运行
-- 或下载 `NekoBoxPro-Linux64.tar.gz` 解压运行
+- 下载 `Sbox-XD-Linux-x64.AppImage` 直接运行
+- 或下载 `Sbox-XD-Linux64.tar.gz` 解压运行
 
 Linux 运行教程见 [docs/Run_Linux.md](docs/Run_Linux.md)。
 
@@ -59,10 +59,14 @@ Linux 运行教程见 [docs/Run_Linux.md](docs/Run_Linux.md)。
 
 客户端内置：设置 → 检查更新，自动从 GitHub Releases 获取。
 
+> **从 NekoBoxPro 时代升级**：程序名与数据目录已变更（`Sbox-XD.exe`、Linux 为 `sbox-xd`；
+> 数据目录 `%LOCALAPPDATA%\Sbox-XD`）。便携版（解压即用、配置在程序目录 `config/`）首次启动会
+> 自动继承旧分组数据；之前用 `-appdata` 或安装包的用户需重新导入订阅，或手动迁移旧数据目录。
+
 ## 构建
 
 ```bash
-git clone https://github.com/NekoBoxHQ/NekoBoxPro
+git clone https://github.com/OpenWrt-MTUN-XD/Sbox-XD
 ```
 
 构建依赖（GPLv3）：
@@ -73,17 +77,17 @@ CI 按固定 tag + 仓库内源码构建（可复现）；对 sing-box 的改动
 
 推送 tag 后由 GitHub Actions 自动构建并发布。
 
-技术文档见 [docs](https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs)。
+技术文档见 [docs](https://github.com/OpenWrt-MTUN-XD/Sbox-XD/tree/main/docs)。
 
 ### 发布签名（minisign）
 
 客户端内置自动更新会**强制校验发布包签名**：updater 在解压前用编译进二进制的公钥验签，签名缺失或验签失败时拒绝更新（fail-closed）。
 
-发布资产由 CI 在 tag 发布时经 minisign 签名（私钥存于 GitHub Secret `NEKO_MINISIGN_SECRET_KEY`），每个 `NekoBoxPro-Windows64.zip` / `NekoBoxPro-Linux64.tar.gz` / `NekoBoxPro-Linux-x64.AppImage` 均附 `<资产>.minisig`。
+发布资产由 CI 在 tag 发布时经 minisign 签名（私钥存于 GitHub Secret `SBOX_MINISIGN_SECRET_KEY`），每个 `Sbox-XD-Windows64.zip` / `Sbox-XD-Linux64.tar.gz` / `Sbox-XD-Linux-x64.AppImage` 均附 `<资产>.minisig`。
 
 ## 讨论群组
 
-加入 Telegram 群组交流反馈: [NekoBoxPro 讨论群](https://t.me/+Kdxyw8yLTz85ODg5)
+加入 Telegram 群组交流反馈: [Sbox-XD 讨论群](https://t.me/+Kdxyw8yLTz85ODg5)
 
 ## License
 

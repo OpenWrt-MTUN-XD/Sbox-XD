@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QFile>
 #include <QTranslator>
 #include <QMessageBox>
 #include <QStandardPaths>
@@ -10,7 +11,7 @@
 #include <QThread>
 
 #include "3rdparty/RunGuard.hpp"
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 
 #include "ui/mainwindow_interface.h"
 
@@ -48,7 +49,7 @@ void loadTranslate(const QString& locale) {
     }
 }
 
-#define LOCAL_SERVER_PREFIX "nekoboxlocalserver-"
+#define LOCAL_SERVER_PREFIX "sboxxdlocalserver-"
 
 int main(int argc, char* argv[]) {
     // Core dump
@@ -78,32 +79,32 @@ int main(int argc, char* argv[]) {
 #endif
 
     // Flags
-    NekoGui::dataStore->argv = QApplication::arguments();
-    if (NekoGui::dataStore->argv.contains("-many")) NekoGui::dataStore->flag_many = true;
-    if (NekoGui::dataStore->argv.contains("-appdata")) {
-        NekoGui::dataStore->flag_use_appdata = true;
-        int appdataIndex = NekoGui::dataStore->argv.indexOf("-appdata");
-        if (NekoGui::dataStore->argv.size() > appdataIndex + 1 && !NekoGui::dataStore->argv.at(appdataIndex + 1).startsWith("-")) {
-            NekoGui::dataStore->appdataDir = NekoGui::dataStore->argv.at(appdataIndex + 1);
+    SboxXD::dataStore->argv = QApplication::arguments();
+    if (SboxXD::dataStore->argv.contains("-many")) SboxXD::dataStore->flag_many = true;
+    if (SboxXD::dataStore->argv.contains("-appdata")) {
+        SboxXD::dataStore->flag_use_appdata = true;
+        int appdataIndex = SboxXD::dataStore->argv.indexOf("-appdata");
+        if (SboxXD::dataStore->argv.size() > appdataIndex + 1 && !SboxXD::dataStore->argv.at(appdataIndex + 1).startsWith("-")) {
+            SboxXD::dataStore->appdataDir = SboxXD::dataStore->argv.at(appdataIndex + 1);
         }
     }
-    if (NekoGui::dataStore->argv.contains("-tray")) NekoGui::dataStore->flag_tray = true;
-    if (NekoGui::dataStore->argv.contains("-debug")) NekoGui::dataStore->flag_debug = true;
-    if (NekoGui::dataStore->argv.contains("-flag_restart_tun_on")) NekoGui::dataStore->flag_restart_tun_on = true;
-    if (NekoGui::dataStore->argv.contains("-flag_reorder")) NekoGui::dataStore->flag_reorder = true;
-#ifdef NKR_CPP_USE_APPDATA
-    NekoGui::dataStore->flag_use_appdata = true; // Example: Package & MacOS
+    if (SboxXD::dataStore->argv.contains("-tray")) SboxXD::dataStore->flag_tray = true;
+    if (SboxXD::dataStore->argv.contains("-debug")) SboxXD::dataStore->flag_debug = true;
+    if (SboxXD::dataStore->argv.contains("-flag_restart_tun_on")) SboxXD::dataStore->flag_restart_tun_on = true;
+    if (SboxXD::dataStore->argv.contains("-flag_reorder")) SboxXD::dataStore->flag_reorder = true;
+#ifdef SBX_CPP_USE_APPDATA
+    SboxXD::dataStore->flag_use_appdata = true; // Example: Package & MacOS
 #endif
-#ifdef NKR_CPP_DEBUG
-    NekoGui::dataStore->flag_debug = true;
+#ifdef SBX_CPP_DEBUG
+    SboxXD::dataStore->flag_debug = true;
 #endif
 
     // dirs & clean
     auto wd = QDir(QApplication::applicationDirPath());
-    if (NekoGui::dataStore->flag_use_appdata) {
-        QApplication::setApplicationName("NekoBoxPro");
-        if (!NekoGui::dataStore->appdataDir.isEmpty()) {
-            wd.setPath(NekoGui::dataStore->appdataDir);
+    if (SboxXD::dataStore->flag_use_appdata) {
+        QApplication::setApplicationName("Sbox-XD");
+        if (!SboxXD::dataStore->appdataDir.isEmpty()) {
+            wd.setPath(SboxXD::dataStore->appdataDir);
         } else {
             wd.setPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
         }
@@ -122,10 +123,10 @@ int main(int argc, char* argv[]) {
     DS_cores->start();
 
     // RunGuard
-    RunGuard guard("nekobox" + wd.absolutePath());
+    RunGuard guard("sboxxd" + wd.absolutePath());
     quint64 guard_data_in = GetRandomUint64();
     quint64 guard_data_out = 0;
-    if (!NekoGui::dataStore->flag_many && !guard.tryToRun(&guard_data_in)) {
+    if (!SboxXD::dataStore->flag_many && !guard.tryToRun(&guard_data_in)) {
         // Some Good System
         if (guard.isAnotherRunning(&guard_data_out)) {
             // Wake up a running instance
@@ -140,7 +141,7 @@ int main(int argc, char* argv[]) {
             return 0;
         }
         // Some Bad System
-        QMessageBox::warning(nullptr, "NekoGui", "RunGuard disallow to run, use -many to force start.");
+        QMessageBox::warning(nullptr, "SboxXD", "RunGuard disallow to run, use -many to force start.");
         return 0;
     }
     MF_release_runguard = [&] { guard.release(); };
@@ -148,7 +149,7 @@ int main(int argc, char* argv[]) {
 // icons
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
     QIcon::setFallbackSearchPaths(QStringList{
-        ":/neko",
+        ":/sboxxd",
         ":/icon",
     });
 #endif
@@ -176,33 +177,38 @@ int main(int argc, char* argv[]) {
     }
 
     // Load dataStore
-    switch (NekoGui::coreType) {
-        case NekoGui::CoreType::SING_BOX:
-            NekoGui::dataStore->fn = "groups/nekobox.json";
+    switch (SboxXD::coreType) {
+        case SboxXD::CoreType::SING_BOX:
+            SboxXD::dataStore->fn = "groups/sboxxd.json";
             break;
         default:
             MessageBoxWarning("Error", "Unknown coreType.");
             return 0;
     }
-    auto isLoaded = NekoGui::dataStore->Load();
+    // 改名兼容：旧版本（NekoBoxPro）的配置文件是 groups/nekobox.json。
+    // 新文件还不存在而旧文件在时直接改名继承，避免升级后丢订阅/分组。
+    if (!QFile::exists(SboxXD::dataStore->fn) && QFile::exists("groups/nekobox.json")) {
+        QFile::rename("groups/nekobox.json", SboxXD::dataStore->fn);
+    }
+    auto isLoaded = SboxXD::dataStore->Load();
     if (!isLoaded) {
-        NekoGui::dataStore->Save();
+        SboxXD::dataStore->Save();
     }
 
     // Datastore & Flags
-    if (NekoGui::dataStore->start_minimal) NekoGui::dataStore->flag_tray = true;
+    if (SboxXD::dataStore->start_minimal) SboxXD::dataStore->flag_tray = true;
 
     // load routing
-    NekoGui::dataStore->routing = std::make_unique<NekoGui::Routing>();
-    NekoGui::dataStore->routing->fn = ROUTES_PREFIX + NekoGui::dataStore->active_routing;
-    isLoaded = NekoGui::dataStore->routing->Load();
+    SboxXD::dataStore->routing = std::make_unique<SboxXD::Routing>();
+    SboxXD::dataStore->routing->fn = ROUTES_PREFIX + SboxXD::dataStore->active_routing;
+    isLoaded = SboxXD::dataStore->routing->Load();
     if (!isLoaded) {
-        NekoGui::dataStore->routing->Save();
+        SboxXD::dataStore->routing->Save();
     }
 
     // Translate
     QString locale;
-    switch (NekoGui::dataStore->language) {
+    switch (SboxXD::dataStore->language) {
         case 1: // English
             break;
         case 2:

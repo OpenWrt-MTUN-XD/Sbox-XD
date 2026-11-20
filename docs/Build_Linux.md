@@ -1,9 +1,9 @@
-在 Linux 下编译 NekoBoxPro
+在 Linux 下编译 Sbox-XD
 
 ## git clone 源码
 
 ```
-git clone https://github.com/NekoBoxHQ/NekoBoxPro.git --recursive
+git clone https://github.com/OpenWrt-MTUN-XD/Sbox-XD.git --recursive
 ```
 
 ## 简单编译法
@@ -22,9 +22,9 @@ cmake -GNinja ..
 ninja
 ```
 
-编译完成后得到 `nekoboxpro`
+编译完成后得到 `sbox-xd`
 
-解压 Release 的压缩包，替换其中的 `nekoboxpro`，删除 `launcher` 即可使用。
+解压 Release 的压缩包，替换其中的 `sbox-xd`，删除 `launcher` 即可使用。
 
 ## 复杂编译法
 
@@ -33,18 +33,18 @@ ninja
 | CMake 参数          | 默认值               | 含义                    |
 |-------------------|-------------------|-----------------------|
 | QT_VERSION_MAJOR  | 5                 | QT版本                  |
-| NKR_NO_EXTERNAL   |                   | 不包含外部 C/C++ 依赖 (以下所有) |
-| NKR_NO_YAML       |                   | 不包含 yaml-cpp          |
-| NKR_NO_QHOTKEY    |                   | 不包含 qhotkey           |
-| NKR_NO_ZXING      |                   | 不包含 zxing             |
-| NKR_NO_GRPC       |                   | 不包含 gRPC              |
-| NKR_PACKAGE       |                   | 编译 package 版本 (aur)   |
-| NKR_LIBS          | ./libs/deps/built | 依赖搜索目录                |
-| NKR_DISABLE_LIBS  |                   | 禁用 NKR_LIBS           |
+| SBX_NO_EXTERNAL   |                   | 不包含外部 C/C++ 依赖 (以下所有) |
+| SBX_NO_YAML       |                   | 不包含 yaml-cpp          |
+| SBX_NO_QHOTKEY    |                   | 不包含 qhotkey           |
+| SBX_NO_ZXING      |                   | 不包含 zxing             |
+| SBX_NO_GRPC       |                   | 不包含 gRPC              |
+| SBX_PACKAGE       |                   | 编译 package 版本 (aur)   |
+| SBX_LIBS          | ./libs/deps/built | 依赖搜索目录                |
+| SBX_DISABLE_LIBS  |                   | 禁用 SBX_LIBS           |
 
-1. `NKR_LIBS` 的值会被追加到 `CMAKE_PREFIX_PATH`
-2. `NKR_PACKAGE` 打开后，`NKR_LIBS` 的默认值为 `./libs/deps/package` ，具体依赖请看 `build_deps_all.sh`
-3. `NKR_PACKAGE` 打开后，应用将使用 appdata 目录存放配置，自动更新等功能将被禁用。
+1. `SBX_LIBS` 的值会被追加到 `CMAKE_PREFIX_PATH`
+2. `SBX_PACKAGE` 打开后，`SBX_LIBS` 的默认值为 `./libs/deps/package` ，具体依赖请看 `build_deps_all.sh`
+3. `SBX_PACKAGE` 打开后，应用将使用 appdata 目录存放配置，自动更新等功能将被禁用。
 
 ### C++ 部分
 
@@ -69,7 +69,7 @@ cmake -GNinja ..
 ninja
 ```
 
-编译完成后得到 `nekoboxpro`
+编译完成后得到 `sbox-xd`
 
 ### Go 部分编译
 

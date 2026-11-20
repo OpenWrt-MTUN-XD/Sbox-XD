@@ -9,13 +9,13 @@
 #include <QJsonDocument>
 #include <QElapsedTimer>
 
-namespace NekoGui_traffic {
+namespace SboxXD_traffic {
 
     TrafficLooper *trafficLooper = new TrafficLooper;
     QElapsedTimer elapsedTimer;
 
     TrafficData *TrafficLooper::update_stats(TrafficData *item) {
-#ifndef NKR_NO_GRPC
+#ifndef SBX_NO_GRPC
         // last update
         auto now = elapsedTimer.elapsed();
         auto interval = now - item->last_update;
@@ -26,8 +26,8 @@ namespace NekoGui_traffic {
         // 原来直接 `item->downlink += downlink`，等于把累计值每轮都累加一遍，
         // 流量会按运行时间的平方虚高。改成先算增量（本次累计 - 上次累计）。
         bool okUp = false, okDown = false;
-        auto uplink = NekoGui_rpc::defaultClient->QueryStats(item->tag, "uplink", &okUp);
-        auto downlink = NekoGui_rpc::defaultClient->QueryStats(item->tag, "downlink", &okDown);
+        auto uplink = SboxXD_rpc::defaultClient->QueryStats(item->tag, "uplink", &okUp);
+        auto downlink = SboxXD_rpc::defaultClient->QueryStats(item->tag, "downlink", &okDown);
 
         // ⚠️ 查询失败（超时/出错）时 QueryStats 返回 0，那不是真实计数。此时**绝不能**
         // 把基准 last_* 写成 0 —— 否则下一次成功轮询会算出 `累计值 - 0`，把整段会话流量
@@ -61,8 +61,8 @@ namespace NekoGui_traffic {
     }
 
     QJsonArray TrafficLooper::get_connection_list() {
-#ifndef NKR_NO_GRPC
-        auto str = NekoGui_rpc::defaultClient->ListConnections();
+#ifndef SBX_NO_GRPC
+        auto str = SboxXD_rpc::defaultClient->ListConnections();
         QJsonDocument jsonDocument = QJsonDocument::fromJson(str.c_str());
         return jsonDocument.array();
 #else
@@ -96,10 +96,10 @@ namespace NekoGui_traffic {
     void TrafficLooper::Loop() {
         elapsedTimer.start();
         while (true) {
-            auto sleep_ms = NekoGui::dataStore->traffic_loop_interval;
+            auto sleep_ms = SboxXD::dataStore->traffic_loop_interval;
             if (sleep_ms < 500 || sleep_ms > 5000) sleep_ms = 1000;
             QThread::msleep(sleep_ms);
-            if (NekoGui::dataStore->traffic_loop_interval == 0) continue; // user disabled
+            if (SboxXD::dataStore->traffic_loop_interval == 0) continue; // user disabled
 
             // profile start and stop
             if (!loop_enabled) {
@@ -126,7 +126,7 @@ namespace NekoGui_traffic {
 
             // do conn list update
             QJsonArray conn_list;
-            if (NekoGui::dataStore->connection_statistics) {
+            if (SboxXD::dataStore->connection_statistics) {
                 conn_list = get_connection_list();
             }
 
@@ -142,11 +142,11 @@ namespace NekoGui_traffic {
                     if (item->id < 0) continue;
                     m->refresh_proxy_list(item->id);
                 }
-                if (NekoGui::dataStore->connection_statistics) {
+                if (SboxXD::dataStore->connection_statistics) {
                     m->refresh_connection_list(conn_list);
                 }
             });
         }
     }
 
-} // namespace NekoGui_traffic
+} // namespace SboxXD_traffic

@@ -14,7 +14,7 @@ fi
 # libs/deps/...
 mkdir -p $deps
 cd $deps
-if [ -z $NKR_PACKAGE ]; then
+if [ -z $SBX_PACKAGE ]; then
   INSTALL_PREFIX=$PWD/built
 else
   INSTALL_PREFIX=$PWD/package

@@ -1,9 +1,9 @@
-在 Windows 下编译 NekoBoxPro
+在 Windows 下编译 Sbox-XD
 
 ### git clone 源码
 
 ```
-git clone https://github.com/NekoBoxHQ/NekoBoxPro.git --recursive
+git clone https://github.com/OpenWrt-MTUN-XD/Sbox-XD.git --recursive
 ```
 
 ### 安装 Visual Studio
@@ -55,9 +55,9 @@ cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:/path/to/qt/5.15.
 ninja
 ```
 
-编译完成后得到 `NekoBoxPro.exe`
+编译完成后得到 `Sbox-XD.exe`
 
-最后运行 `windeployqt NekoBoxPro.exe` 自动复制所需 DLL 等文件到当前目录
+最后运行 `windeployqt Sbox-XD.exe` 自动复制所需 DLL 等文件到当前目录
 
 ### Go 部分编译
 

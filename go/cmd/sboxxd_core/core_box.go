@@ -14,7 +14,7 @@ import (
 var instance *box.Box
 
 func setupCore() {
-	neko_log.SetupLog(50*1024, "./neko.log")
+	neko_log.SetupLog(50*1024, "./sboxxd.log")
 	//
 	neko_common.GetCurrentInstance = func() interface{} {
 		return instance

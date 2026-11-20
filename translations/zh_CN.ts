@@ -267,8 +267,8 @@
         <translation>复制成功</translation>
     </message>
     <message>
-        <source>Copy profile share links (Neko Links)</source>
-        <translation>复制分组内配置的分享链接 (Neko Links)</translation>
+        <source>Copy profile share links (Sbox-XD Links)</source>
+        <translation>复制分组内配置的分享链接 (Sbox-XD Links)</translation>
     </message>
     <message>
         <source>Manually column width</source>
@@ -706,22 +706,22 @@ For more information, see the document &quot;Configuration/DNS&quot;.</source>
         <translation>代理进程名</translation>
     </message>
     <message>
-        <source>Whether blacklisted or whitelisted, your traffic will be handled by nekobox_core (sing-tun). This is NOT equal to &quot;process mode&quot; of some software.</source>
-        <translation>无论是黑名单还是白名单，您的流量都将由 nekobox_core (sing-tun) 处理。这不等于某些软件的「进程模式」。</translation>
+        <source>Whether blacklisted or whitelisted, your traffic will be handled by sboxxd_core (sing-tun). This is NOT equal to &quot;process mode&quot; of some software.</source>
+        <translation>无论是黑名单还是白名单，您的流量都将由 sboxxd_core (sing-tun) 处理。这不等于某些软件的「进程模式」。</translation>
     </message>
     <message>
         <source>Troubleshooting</source>
         <translation>故障排除</translation>
     </message>
     <message>
-        <source>If you have trouble starting VPN, you can force reset nekobox_core process here.
+        <source>If you have trouble starting VPN, you can force reset sboxxd_core process here.
 
 If still not working, see documentation for more information.
-https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</source>
-        <translation>如果您在启动 Tun 时遇到问题，您可以在此处强制重置 nekobox_core 进程。
+https://github.com/OpenWrt-MTUN-XD/Sbox-XD/tree/main/docs</source>
+        <translation>如果您在启动 Tun 时遇到问题，您可以在此处强制重置 sboxxd_core 进程。
 
 如果仍然无法正常工作，请参阅文档以获取更多信息。
-https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</translation>
+https://github.com/OpenWrt-MTUN-XD/Sbox-XD/tree/main/docs</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -737,9 +737,9 @@ https://github.com/NekoBoxHQ/NekoBoxPro/tree/main/docs</translation>
     </message>
     <message>
         <source>Add a tun inbound to the profile startup, instead of using two processes.
-This needs to be run NekoBoxPro with administrator privileges.</source>
+This needs to be run Sbox-XD with administrator privileges.</source>
         <translation>在配置文件启动时添加一个tun inbound，而不是使用两个进程。
-这需要以管理员权限运行NekoBoxPro。</translation>
+这需要以管理员权限运行Sbox-XD。</translation>
     </message>
 </context>
 <context>
@@ -1369,8 +1369,8 @@ End: %2</source>
         <translation>克隆 %1 个项目</translation>
     </message>
     <message>
-        <source>Copy links of selected (Neko Links)</source>
-        <translation>批量复制选中项目的分享链接 (Neko Links)</translation>
+        <source>Copy links of selected (Sbox-XD Links)</source>
+        <translation>批量复制选中项目的分享链接 (Sbox-XD Links)</translation>
     </message>
     <message>
         <source>Allow other devices to connect</source>
@@ -1451,8 +1451,8 @@ Split by line.</source>
         <translation>重启程序生效。</translation>
     </message>
     <message>
-        <source>Please run NekoBoxPro as admin</source>
-        <translation>请以管理员权限运行 NekoBoxPro</translation>
+        <source>Please run Sbox-XD as admin</source>
+        <translation>请以管理员权限运行 Sbox-XD</translation>
     </message>
     <message>
         <source>Restart Proxy</source>

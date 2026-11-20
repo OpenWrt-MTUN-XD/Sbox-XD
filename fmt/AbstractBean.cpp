@@ -4,7 +4,7 @@
 #include <QHostInfo>
 #include <QUrl>
 
-namespace NekoGui_fmt {
+namespace SboxXD_fmt {
     AbstractBean::AbstractBean(int version) {
         this->version = version;
         _add(new configItem("_v", &this->version, itemType::integer));
@@ -15,10 +15,10 @@ namespace NekoGui_fmt {
         _add(new configItem("c_out", &custom_outbound, itemType::string));
     }
 
-    QString AbstractBean::ToNekorayShareLink(const QString &type) {
+    QString AbstractBean::ToSboxXDShareLink(const QString &type) {
         auto b = ToJson();
         QUrl url;
-        url.setScheme("nekoray");
+        url.setScheme("sboxxd");
         url.setHost(type);
         url.setFragment(QJsonObject2QString(b, true)
                             .toUtf8()
@@ -87,4 +87,4 @@ namespace NekoGui_fmt {
         onFinished();
 #endif
     }
-} // namespace NekoGui_fmt
+} // namespace SboxXD_fmt

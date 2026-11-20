@@ -1,6 +1,6 @@
 #include "w_JsonEditor.hpp"
 
-#include "main/NekoGui.hpp"
+#include "main/SboxXD.hpp"
 
 JsonEditor::JsonEditor(const QJsonObject& rootObject, QWidget* parent) : QDialog(parent) {
     setupUi(this);
