@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  SBOX_VERSION: 5.0.25
+  SBOX_VERSION: 5.0.26
   # 内核 = 上游 SagerNet/sing-box 的固定 tag + patches/ 里的补丁（打完补丁即等于以前的 fork）
   SING_BOX_VERSION: v1.14.5
   SING_BOX_PATCH: sing-box-0001-platform-log-disable-colors.patch

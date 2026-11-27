@@ -624,8 +624,15 @@ namespace SboxXD {
             rule["server"] = server;
             dnsRules += rule;
         };
-        add_rule_dns(status->domainListDNSRemote, "dns-remote");
-        add_rule_dns(status->domainListDNSDirect, "dns-direct");
+        // 测试配置（forTest）里不生成 dns-remote / dns-direct 服务器（走系统 DNS），
+        // 因此这两类「域名走指定 DNS 服务器」的规则也必须一并跳过：
+        // 否则规则引用了不存在的 server，sing-box 初始化 DNS router 时会直接失败，
+        // 报 `initialize dns router: dns rule[N]: server not found: dns-direct`，
+        // 表现为「URL 测试全部报错」。
+        if (!status->forTest) {
+            add_rule_dns(status->domainListDNSRemote, "dns-remote");
+            add_rule_dns(status->domainListDNSDirect, "dns-direct");
+        }
 
         // built-in rules（sing-box 1.14: rcode 服务器已移除，改用 predefined 规则动作）
         if (!status->forTest) {
