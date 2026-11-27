@@ -18,9 +18,9 @@ permissions:
   contents: read
 
 env:
-  SBOX_VERSION: 5.0.24
+  SBOX_VERSION: 5.0.25
   # 内核 = 上游 SagerNet/sing-box 的固定 tag + patches/ 里的补丁（打完补丁即等于以前的 fork）
-  SING_BOX_VERSION: v1.14.4
+  SING_BOX_VERSION: v1.14.5
   SING_BOX_PATCH: sing-box-0001-platform-log-disable-colors.patch
   # geo 数据固定版本（官方 release，均附带官方 sha256sum，CI 内强制校验）
   # 上游会定期删除旧 release，导致固定 tag 404（v5.0.13 前修过一次，2026-11 又失效）；
