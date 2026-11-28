@@ -1,15 +1,15 @@
 module sboxxd_core
 
-go 1.25.5
+go 1.26.0
 
 require (
 	github.com/matsuridayo/libneko v1.0.0 // replaced
-	github.com/sagernet/sing-box v1.14.5 // replaced
+	github.com/sagernet/sing-box v1.14.6 // replaced
 	// github.com/sagernet/sing-dns v1.0.0 // indirect; replaced
 	grpc_server v1.0.0
 )
 
-require github.com/sagernet/sing v0.9.7-0.20261125120655-610c8699131b
+require github.com/sagernet/sing v0.9.7-0.20261127131305-db09250ecaed
 
 require (
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
@@ -32,7 +32,7 @@ require (
 	github.com/creack/pty v1.1.24 // indirect
 	github.com/cretz/bine v0.2.0 // indirect
 	github.com/database64128/netx-go v0.1.1 // indirect
-	github.com/database64128/tfo-go/v2 v2.3.3 // indirect
+	github.com/database64128/tfo-go/v2 v2.4.2 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20240119213807-a09d6be7affa // indirect
 	github.com/dgryski/go-camellia v0.0.0-20191119043421-69a8a13fb23d // indirect
 	github.com/dgryski/go-metro v0.0.0-20180109044635-280f6062b5bc // indirect
@@ -174,7 +174,7 @@ require (
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.45.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
